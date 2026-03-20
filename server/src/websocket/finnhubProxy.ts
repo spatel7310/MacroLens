@@ -8,6 +8,18 @@ export function setupWebSocket(server: Server) {
   const wss = new WebSocketServer({ server, path: '/ws' })
   let finnhubWs: WebSocket | null = null
   let reconnectAttempt = 0
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+
+  function scheduleReconnect() {
+    if (reconnectTimer) return
+    const delay = Math.min(1000 * 2 ** reconnectAttempt, 60_000)
+    reconnectAttempt++
+    console.log(`Reconnecting to Finnhub in ${delay / 1000}s...`)
+    reconnectTimer = setTimeout(() => {
+      reconnectTimer = null
+      connectFinnhub()
+    }, delay)
+  }
 
   function connectFinnhub() {
     if (!config.finnhubApiKey) {
@@ -46,15 +58,13 @@ export function setupWebSocket(server: Server) {
     })
 
     finnhubWs.on('close', () => {
-      console.log('Finnhub WebSocket closed, reconnecting...')
-      const delay = Math.min(1000 * 2 ** reconnectAttempt, 30_000)
-      reconnectAttempt++
-      setTimeout(connectFinnhub, delay)
+      console.log('Finnhub WebSocket closed')
+      finnhubWs = null
+      scheduleReconnect()
     })
 
     finnhubWs.on('error', (err) => {
       console.error('Finnhub WebSocket error:', err.message)
-      finnhubWs?.close()
     })
   }
 
