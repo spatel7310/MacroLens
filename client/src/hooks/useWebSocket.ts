@@ -3,7 +3,7 @@ import { useRealtimeStore } from '@/stores/realtimeStore'
 
 export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null)
-  const reconnectTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const reconnectTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
   const setQuote = useRealtimeStore((s) => s.setQuote)
   const setConnected = useRealtimeStore((s) => s.setConnected)
 
