@@ -14,5 +14,5 @@
   </defs>
   <rect width="512" height="512" fill="url(#bg)" rx="77"/>
   <rect x="26" y="26" width="461" height="461" fill="none" stroke="#00f0ff" stroke-width="5" rx="61" opacity="0.3"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="205" fill="#00f0ff" filter="url(#glow)">IB</text>
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="205" fill="#00f0ff" filter="url(#glow)">ML</text>
 </svg>
