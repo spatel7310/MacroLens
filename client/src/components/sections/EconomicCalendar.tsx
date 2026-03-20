@@ -49,8 +49,6 @@ export function EconomicCalendar() {
               </span>
               <ImpactDot impact={event.impact} />
               <span className="flex-1 truncate">{event.name}</span>
-              <span className="text-chrome/40 w-14 text-right">{event.previous || '—'}</span>
-              <span className="text-cyan/60 w-14 text-right">{event.forecast || '—'}</span>
             </div>
           )
         })}

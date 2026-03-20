@@ -29,7 +29,7 @@ export function useAlerts(
   _realEstateData?: RealEstateData
 ) {
   const { rules, triggerAlert, updateRuleCooldown } = useAlertStore()
-  const [latestToast, setLatestToast] = useState<{ id: string; message: string } | null>(null)
+  const [toasts, setToasts] = useState<{ id: string; message: string }[]>([])
   const prevValues = useRef<MetricValues>({})
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export function useAlerts(
           dismissed: false,
         })
         updateRuleCooldown(rule.id, now)
-        setLatestToast({ id: alertId, message: `${rule.label}: ${value.toFixed(2)}` })
+        setToasts((prev) => [{ id: alertId, message: `${rule.label}: ${value.toFixed(2)}` }, ...prev].slice(0, 5))
       }
     }
 
@@ -71,7 +71,7 @@ export function useAlerts(
   }, [macroData, marketData, _realEstateData, rules, triggerAlert, updateRuleCooldown])
 
   return {
-    latestToast,
-    dismissToast: () => setLatestToast(null),
+    toasts,
+    dismissToast: (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id)),
   }
 }

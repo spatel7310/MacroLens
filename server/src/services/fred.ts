@@ -35,8 +35,13 @@ export async function getSeriesValues(seriesId: string, count: number): Promise<
   return obs.map((o) => ({ date: o.date, value: parseFloat(o.value) })).reverse()
 }
 
-export async function getTreasury10Y(): Promise<number> {
-  return getSeriesValue('DGS10')
+export async function getTreasury10Y(): Promise<{ value: number; change: number }> {
+  // Fetch ~30 observations to get roughly a month of data
+  const obs = await getLatestObservation('DGS10', 30)
+  if (!obs.length) throw new Error('No data for DGS10')
+  const latest = parseFloat(obs[0].value)
+  const oldest = parseFloat(obs[obs.length - 1].value)
+  return { value: latest, change: latest - oldest }
 }
 
 export async function getMortgageRate(): Promise<number> {

@@ -6,7 +6,7 @@ import { RealEstateSignals } from './components/sections/RealEstateSignals'
 import { EconomicCalendar } from './components/sections/EconomicCalendar'
 import { CuratedNews } from './components/sections/CuratedNews'
 import { AlertsPanel } from './components/sections/AlertsPanel'
-import { AlertToast } from './components/ui/AlertToast'
+import { AlertToastStack } from './components/ui/AlertToast'
 import { useWebSocket } from './hooks/useWebSocket'
 import { useAlerts } from './hooks/useAlerts'
 import { useMacroData, useMarketData, useRealEstateData } from './hooks/useMarketData'
@@ -15,12 +15,11 @@ function AlertsProvider() {
   const { data: macroData } = useMacroData()
   const { data: marketData } = useMarketData()
   const { data: realEstateData } = useRealEstateData()
-  const { latestToast, dismissToast } = useAlerts(macroData, marketData, realEstateData)
+  const { toasts, dismissToast } = useAlerts(macroData, marketData, realEstateData)
 
   return (
-    <AlertToast
-      message={latestToast?.message ?? ''}
-      visible={!!latestToast}
+    <AlertToastStack
+      toasts={toasts}
       onDismiss={dismissToast}
     />
   )

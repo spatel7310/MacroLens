@@ -9,6 +9,7 @@ import marketRouter from './routes/market.js'
 import realEstateRouter from './routes/realEstate.js'
 import calendarRouter from './routes/calendar.js'
 import newsRouter from './routes/news.js'
+import historyRouter from './routes/history.js'
 
 const app = express()
 app.use(cors())
@@ -26,6 +27,7 @@ app.use('/api/market', marketRouter)
 app.use('/api/real-estate', realEstateRouter)
 app.use('/api/calendar', calendarRouter)
 app.use('/api/news', newsRouter)
+app.use('/api/history', historyRouter)
 
 const server = createServer(app)
 setupWebSocket(server)

@@ -1,6 +1,7 @@
 export interface MacroData {
   sp500: { price: number; change: number; changePercent: number }
   treasury10Y: number
+  treasury10YChange: number
   mortgageRate: number
   fedRate: { upper: number; lower: number }
   cpiYoY: number
@@ -61,6 +62,13 @@ export interface TriggeredAlert {
   message: string
   timestamp: number
   dismissed: boolean
+}
+
+export interface HistoryResponse {
+  seriesId: string
+  label: string
+  range: string
+  data: { date: string; value: number }[]
 }
 
 export interface RealtimeQuote {

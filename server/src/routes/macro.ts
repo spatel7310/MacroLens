@@ -18,7 +18,8 @@ router.get('/', async (_req, res) => {
       ])
       return {
         sp500: spy,
-        treasury10Y,
+        treasury10Y: treasury10Y.value,
+        treasury10YChange: Math.round(treasury10Y.change * 100) / 100,
         mortgageRate,
         fedRate,
         cpiYoY: Math.round(cpiYoY * 100) / 100,
