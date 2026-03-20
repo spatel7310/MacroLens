@@ -13,8 +13,15 @@ export function useWebSocket() {
 
     function connect() {
       if (disposed) return
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const ws = new WebSocket(`${protocol}//${window.location.host}/ws`)
+      const serverUrl = import.meta.env.VITE_SERVER_URL
+      let wsUrl: string
+      if (serverUrl) {
+        wsUrl = `${serverUrl}/ws`.replace(/^https:\/\//, 'wss://').replace(/^http:\/\//, 'ws://')
+      } else {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        wsUrl = `${protocol}//${window.location.host}/ws`
+      }
+      const ws = new WebSocket(wsUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
