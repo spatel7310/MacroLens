@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#0d0d15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="192" height="192" fill="url(#bg)" rx="29"/>
+  <rect x="10" y="10" width="173" height="173" fill="none" stroke="#00f0ff" stroke-width="2" rx="23" opacity="0.3"/>
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="77" fill="#00f0ff" filter="url(#glow)">IB</text>
+</svg>

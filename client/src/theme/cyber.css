@@ -1,0 +1,111 @@
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 240, 255, 0.015) 2px,
+    rgba(0, 240, 255, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Grid background */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glow utilities */
+.glow-cyan {
+  text-shadow: 0 0 7px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+}
+.glow-green {
+  text-shadow: 0 0 7px rgba(5, 255, 161, 0.6), 0 0 20px rgba(5, 255, 161, 0.3);
+}
+.glow-magenta {
+  text-shadow: 0 0 7px rgba(255, 42, 109, 0.6), 0 0 20px rgba(255, 42, 109, 0.3);
+}
+.glow-yellow {
+  text-shadow: 0 0 7px rgba(252, 238, 10, 0.6), 0 0 20px rgba(252, 238, 10, 0.3);
+}
+
+.box-glow-cyan {
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.15), inset 0 0 8px rgba(0, 240, 255, 0.05);
+}
+.box-glow-green {
+  box-shadow: 0 0 8px rgba(5, 255, 161, 0.15), inset 0 0 8px rgba(5, 255, 161, 0.05);
+}
+.box-glow-magenta {
+  box-shadow: 0 0 8px rgba(255, 42, 109, 0.15), inset 0 0 8px rgba(255, 42, 109, 0.05);
+}
+
+/* Glitch animation */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 2px); }
+}
+
+.glitch {
+  position: relative;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.glitch:hover::before {
+  opacity: 0.8;
+  color: var(--color-cyan);
+  animation: glitch 0.3s ease-in-out;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translate(-2px);
+}
+.glitch:hover::after {
+  opacity: 0.8;
+  color: var(--color-magenta);
+  animation: glitch 0.3s ease-in-out reverse;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  transform: translate(2px);
+}
+
+/* Shimmer animation for skeletons */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 240, 255, 0.05) 25%,
+    rgba(0, 240, 255, 0.1) 50%,
+    rgba(0, 240, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-live {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
