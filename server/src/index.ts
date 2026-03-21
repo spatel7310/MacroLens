@@ -10,6 +10,7 @@ import realEstateRouter from './routes/realEstate.js'
 import calendarRouter from './routes/calendar.js'
 import newsRouter from './routes/news.js'
 import historyRouter from './routes/history.js'
+import dealRouter from './routes/deal.js'
 
 const app = express()
 app.use(cors())
@@ -28,6 +29,7 @@ app.use('/api/real-estate', realEstateRouter)
 app.use('/api/calendar', calendarRouter)
 app.use('/api/news', newsRouter)
 app.use('/api/history', historyRouter)
+app.use('/api/deal', dealRouter)
 
 const server = createServer(app)
 setupWebSocket(server)

@@ -38,7 +38,7 @@ export function CuratedNews() {
           >
             <span className="text-chrome/30 shrink-0 w-12">{item.relativeTime}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-chrome group-hover:text-cyan transition-colors truncate">
+              <p className="text-chrome group-hover:text-cyan transition-colors">
                 {item.title}
               </p>
               <p className="text-chrome/30 text-[10px]">{item.source}</p>

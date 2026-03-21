@@ -1,4 +1,4 @@
-import type { MacroData, FedData, MarketData, RealEstateData, CalendarEvent, NewsItem, HistoryResponse } from '@/types'
+import type { MacroData, FedData, MarketData, RealEstateData, CalendarEvent, NewsItem, HistoryResponse, AreaLookup } from '@/types'
 
 const BASE = import.meta.env.VITE_SERVER_URL
   ? `${import.meta.env.VITE_SERVER_URL}/api`
@@ -19,4 +19,6 @@ export const api = {
   news: () => fetchJson<NewsItem[]>('/news'),
   history: (seriesId: string, range: string) =>
     fetchJson<HistoryResponse>(`/history/${seriesId}?range=${range}`),
+  dealLookup: (address: string) =>
+    fetchJson<AreaLookup>(`/deal/lookup?address=${encodeURIComponent(address)}`),
 }

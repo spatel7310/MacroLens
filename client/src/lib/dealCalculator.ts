@@ -1,0 +1,142 @@
+import type { DealInputs, DealResults } from '@/types'
+
+// --- Regional assumptions ---
+
+type RegionKey = 'southeast' | 'midwest' | 'northeast_west' | 'default'
+
+interface RegionalAssumptions {
+  taxRate: number
+  insurancePerUnit: number
+  maintenancePct: number
+  capexPct: number
+}
+
+const REGIONAL_DEFAULTS: Record<RegionKey, RegionalAssumptions> = {
+  southeast:      { taxRate: 1.1, insurancePerUnit: 350, maintenancePct: 12, capexPct: 10 },
+  midwest:        { taxRate: 1.5, insurancePerUnit: 300, maintenancePct: 13, capexPct: 11 },
+  northeast_west: { taxRate: 1.3, insurancePerUnit: 400, maintenancePct: 12, capexPct: 10 },
+  default:        { taxRate: 1.2, insurancePerUnit: 325, maintenancePct: 12, capexPct: 10 },
+}
+
+const STATE_TO_REGION: Record<string, RegionKey> = {
+  NC: 'southeast', SC: 'southeast', GA: 'southeast', FL: 'southeast', TN: 'southeast',
+  MI: 'midwest', OH: 'midwest', IN: 'midwest', IL: 'midwest',
+  NY: 'northeast_west', CA: 'northeast_west', WA: 'northeast_west', NJ: 'northeast_west', MA: 'northeast_west',
+}
+
+// Global conservative assumptions
+const VACANCY = 0.10
+const UTILITIES = 0.05
+const OTHER = 0.03
+
+function getRegion(state: string): RegionalAssumptions {
+  const key = STATE_TO_REGION[state] ?? 'default'
+  return REGIONAL_DEFAULTS[key]
+}
+
+function calcMonthlyPayment(principal: number, annualRate: number, years: number): number {
+  if (principal <= 0) return 0
+  const r = annualRate / 100 / 12
+  const n = years * 12
+  if (r === 0) return principal / n
+  return principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+}
+
+// --- Main calculation ---
+
+export function calculateDeal(inputs: DealInputs, effectiveRate: number, stressTest = false): DealResults {
+  const region = getRegion(inputs.location)
+
+  const rentMultiplier = stressTest ? 0.90 : 1
+  const expenseMultiplier = stressTest ? 1.10 : 1
+
+  const grossPotentialRent = inputs.units * inputs.avgRentPerUnit * 12 * rentMultiplier
+  const effectiveGrossIncome = grossPotentialRent * (1 - VACANCY)
+
+  const taxes = inputs.purchasePrice * region.taxRate / 100 * expenseMultiplier
+  const insurance = region.insurancePerUnit * inputs.units * expenseMultiplier
+  const maintenance = grossPotentialRent * region.maintenancePct / 100 * expenseMultiplier
+  const capex = grossPotentialRent * region.capexPct / 100 * expenseMultiplier
+  const utilities = grossPotentialRent * UTILITIES * expenseMultiplier
+  const other = grossPotentialRent * OTHER * expenseMultiplier
+  const totalOperatingExpenses = taxes + insurance + maintenance + capex + utilities + other
+
+  const noi = effectiveGrossIncome - totalOperatingExpenses
+  const capRate = inputs.purchasePrice > 0 ? noi / inputs.purchasePrice : 0
+
+  const loanAmount = inputs.purchasePrice * (1 - inputs.downPaymentPercent / 100)
+  const monthlyPayment = calcMonthlyPayment(loanAmount, effectiveRate, inputs.loanTermYears)
+  const annualDebtService = monthlyPayment * 12
+
+  const annualCashFlow = noi - annualDebtService
+  const monthlyCashFlow = annualCashFlow / 12
+
+  const cashInvested = inputs.purchasePrice * inputs.downPaymentPercent / 100
+  const cashOnCash = cashInvested > 0 ? annualCashFlow / cashInvested : 0
+
+  const expenseRatio = effectiveGrossIncome > 0 ? totalOperatingExpenses / effectiveGrossIncome : 0
+
+  const dealQuality: DealResults['dealQuality'] =
+    capRate > 0.08 ? 'Strong' : capRate >= 0.06 ? 'Decent' : 'Tight'
+
+  const flags: string[] = []
+  if (annualCashFlow < 0) flags.push('Negative Cash Flow')
+  if (expenseRatio > 0.50) flags.push('High Expenses')
+  if (effectiveRate > 7) flags.push('High Debt Cost')
+
+  return {
+    grossPotentialRent,
+    effectiveGrossIncome,
+    totalOperatingExpenses,
+    noi,
+    capRate,
+    monthlyPayment,
+    annualDebtService,
+    annualCashFlow,
+    monthlyCashFlow,
+    cashInvested,
+    cashOnCash,
+    expenseRatio,
+    dealQuality,
+    flags,
+  }
+}
+
+// --- Max offer price ---
+
+export function maxOfferByCapRate(noi: number, targetCapRate: number): number {
+  if (targetCapRate <= 0) return 0
+  return noi / targetCapRate
+}
+
+export function maxOfferByCoC(
+  inputs: DealInputs,
+  effectiveRate: number,
+  targetCoC: number,
+): number {
+  const region = getRegion(inputs.location)
+  const grossPotentialRent = inputs.units * inputs.avgRentPerUnit * 12
+  const effectiveGrossIncome = grossPotentialRent * (1 - VACANCY)
+
+  // NOI components that don't depend on price
+  const insurance = region.insurancePerUnit * inputs.units
+  const maintenance = grossPotentialRent * region.maintenancePct / 100
+  const capex = grossPotentialRent * region.capexPct / 100
+  const utilities = grossPotentialRent * UTILITIES
+  const other = grossPotentialRent * OTHER
+  const noiBase = effectiveGrossIncome - insurance - maintenance - capex - utilities - other
+
+  // NOI(P) = noiBase - P * taxRate/100
+  // ADS(P) = P * (1-d) * A * 12  where A = monthly annuity factor
+  // CoC = (NOI(P) - ADS(P)) / (P * d)
+  // Solving: P = noiBase / (targetCoC * d + taxRate/100 + (1-d) * 12 * A)
+
+  const d = inputs.downPaymentPercent / 100
+  const r = effectiveRate / 100 / 12
+  const n = inputs.loanTermYears * 12
+  const A = r === 0 ? 1 / n : (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+
+  const denominator = targetCoC * d + region.taxRate / 100 + (1 - d) * 12 * A
+  if (denominator <= 0) return 0
+  return noiBase / denominator
+}

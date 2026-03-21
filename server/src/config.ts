@@ -10,6 +10,8 @@ export const config = {
   finnhubApiKey: process.env.FINNHUB_API_KEY || '',
   fredApiKey: process.env.FRED_API_KEY || '',
   alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY || '',
+  hudUserToken: process.env.HUD_USER_TOKEN || '',
+  censusApiKey: process.env.CENSUS_API_KEY || '',
   cacheTTL: {
     quotes: 30,
     fred: 6 * 60 * 60,

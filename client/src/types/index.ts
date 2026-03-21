@@ -71,6 +71,48 @@ export interface HistoryResponse {
   data: { date: string; value: number }[]
 }
 
+export interface DealInputs {
+  units: number
+  purchasePrice: number
+  avgRentPerUnit: number
+  location: string
+  downPaymentPercent: number
+  loanTermYears: number
+  interestRateOverride: number | null
+}
+
+export interface DealResults {
+  grossPotentialRent: number
+  effectiveGrossIncome: number
+  totalOperatingExpenses: number
+  noi: number
+  capRate: number
+  monthlyPayment: number
+  annualDebtService: number
+  annualCashFlow: number
+  monthlyCashFlow: number
+  cashInvested: number
+  cashOnCash: number
+  expenseRatio: number
+  dealQuality: 'Tight' | 'Decent' | 'Strong'
+  flags: string[]
+}
+
+export interface AreaLookup {
+  geo: { state: string; stateAbbr: string; county: string; zip: string; lat: number; lng: number }
+  fmr: { studio: number; oneBr: number; twoBr: number; threeBr: number; fourBr: number } | null
+  census: { medianIncome: number | null; medianRent: number | null; population: number | null } | null
+}
+
+export interface SavedDeal {
+  id: string
+  address: string
+  inputs: DealInputs
+  results: DealResults
+  areaData: AreaLookup | null
+  savedAt: number
+}
+
 export interface RealtimeQuote {
   symbol: string
   price: number

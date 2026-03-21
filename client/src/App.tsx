@@ -5,6 +5,7 @@ import { MarketHealth } from './components/sections/MarketHealth'
 import { RealEstateSignals } from './components/sections/RealEstateSignals'
 import { EconomicCalendar } from './components/sections/EconomicCalendar'
 import { CuratedNews } from './components/sections/CuratedNews'
+import { DealAnalyzer } from './components/sections/DealAnalyzer'
 import { AlertsPanel } from './components/sections/AlertsPanel'
 import { AlertToastStack } from './components/ui/AlertToast'
 import { useWebSocket } from './hooks/useWebSocket'
@@ -38,6 +39,9 @@ export default function App() {
       <MarketHealth />
       <div className="md:col-span-2">
         <RealEstateSignals />
+      </div>
+      <div className="md:col-span-2">
+        <DealAnalyzer />
       </div>
       <div className="md:col-span-2">
         <EconomicCalendar />
