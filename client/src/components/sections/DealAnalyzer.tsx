@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SectionCard } from '../ui/SectionCard'
 import { GlowBadge } from '../ui/GlowBadge'
 import { useMacroData } from '@/hooks/useMarketData'
@@ -58,6 +58,12 @@ export function DealAnalyzer() {
 
   const autoRate = (macroData?.treasury10Y ?? 4.0) + 2.5
   const effectiveRate = inputs.interestRateOverride ?? autoRate
+
+  useEffect(() => {
+    if (inputs.interestRateOverride === null && macroData) {
+      store.updateInputs({ interestRateOverride: Math.round(autoRate * 10) / 10 })
+    }
+  }, [macroData])
 
   const results = useMemo(() => {
     if (inputs.units <= 0 || inputs.purchasePrice <= 0 || inputs.avgRentPerUnit <= 0) return null
@@ -173,11 +179,11 @@ export function DealAnalyzer() {
         </Field>
 
         <Field label="Purchase Price">
-          <input type="number" min={0} step={10000} value={inputs.purchasePrice || ''} onChange={numChange('purchasePrice')} placeholder="500000" className={inputClass} inputMode="numeric" />
+          <input type="number" min={0} step={10000} value={inputs.purchasePrice || ''} onChange={numChange('purchasePrice')} className={inputClass} inputMode="numeric" />
         </Field>
 
         <Field label="Rent / Unit / Mo">
-          <input type="number" min={0} step={50} value={inputs.avgRentPerUnit || ''} onChange={numChange('avgRentPerUnit')} placeholder="800" className={inputClass} inputMode="numeric" />
+          <input type="number" min={0} step={50} value={inputs.avgRentPerUnit || ''} onChange={numChange('avgRentPerUnit')} className={inputClass} inputMode="numeric" />
         </Field>
 
         <Field label="Location" hint={areaData ? '(auto)' : ''}>
@@ -200,12 +206,11 @@ export function DealAnalyzer() {
         </Field>
 
         <div className="col-span-2">
-          <Field label="Interest Rate" hint={inputs.interestRateOverride === null ? `auto: ${autoRate.toFixed(1)}%` : ''}>
+          <Field label="Interest Rate %">
             <input
               type="number" min={0} max={20} step={0.1}
               value={inputs.interestRateOverride ?? ''}
               onChange={(e) => store.updateInputs({ interestRateOverride: e.target.value === '' ? null : parseFloat(e.target.value) })}
-              placeholder={`${autoRate.toFixed(1)}% (10Y + 2.5%)`}
               className={inputClass}
               inputMode="decimal"
             />

@@ -4,11 +4,11 @@ import type { DealInputs, DealResults, AreaLookup, SavedDeal } from '@/types'
 
 const DEFAULT_INPUTS: DealInputs = {
   units: 0,
-  purchasePrice: 0,
-  avgRentPerUnit: 0,
+  purchasePrice: 500000,
+  avgRentPerUnit: 800,
   location: '',
-  downPaymentPercent: 25,
-  loanTermYears: 30,
+  downPaymentPercent: 30,
+  loanTermYears: 15,
   interestRateOverride: null,
 }
 
