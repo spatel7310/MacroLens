@@ -104,11 +104,43 @@ export interface AreaLookup {
   census: { medianIncome: number | null; medianRent: number | null; population: number | null } | null
 }
 
+export interface SFRInputs {
+  beds: number
+  baths: number
+  monthlyRent: number | null
+  purchasePrice: number
+  location: string
+  downPaymentPercent: number
+  loanTermYears: number
+  interestRateOverride: number | null
+}
+
+export interface SFRResults {
+  grossAnnualRent: number
+  effectiveGrossIncome: number
+  totalOperatingExpenses: number
+  noi: number
+  capRate: number
+  monthlyPayment: number
+  annualDebtService: number
+  annualCashFlow: number
+  monthlyCashFlow: number
+  cashInvested: number
+  cashOnCash: number
+  expenseRatio: number
+  dealQuality: 'Negative Cash Flow' | 'Thin Margin' | 'Healthy Cash Flow'
+  flags: string[]
+  rentSource: 'manual' | 'fmr' | 'none'
+}
+
+export type DealTab = 'multifamily' | 'sfr'
+
 export interface SavedDeal {
   id: string
   address: string
-  inputs: DealInputs
-  results: DealResults
+  type: DealTab
+  inputs: DealInputs | SFRInputs
+  results: DealResults | SFRResults
   areaData: AreaLookup | null
   savedAt: number
 }
