@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { SectionCard } from '../ui/SectionCard'
 import { NumberTicker } from '../ui/NumberTicker'
 import { GlowBadge } from '../ui/GlowBadge'
@@ -6,6 +7,7 @@ import { useMarketData } from '@/hooks/useMarketData'
 
 export function MarketHealth() {
   const { data, isLoading } = useMarketData()
+  const [showInfo, setShowInfo] = useState(true)
 
   if (isLoading) {
     return (
@@ -22,7 +24,10 @@ export function MarketHealth() {
 
   return (
     <SectionCard title="Market Health" accent="cyan">
-      <div className="flex items-center justify-between">
+      <div
+        className="flex items-center justify-between cursor-pointer active:bg-cyan/5 rounded-md -m-1.5 p-1.5"
+        onClick={() => setShowInfo(false)}
+      >
         <div>
           <div className="text-[10px] text-chrome/50 uppercase tracking-wider">VIX</div>
           <NumberTicker
@@ -33,6 +38,19 @@ export function MarketHealth() {
         </div>
         <GlowBadge variant={trendVariant}>{data.trend}</GlowBadge>
       </div>
+      {showInfo && (
+        <div className="mt-2 space-y-1">
+          <p className="text-[10px] text-chrome/35 leading-relaxed">
+            The VIX measures expected market volatility over the next 30 days, often called the "fear gauge."
+          </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-chrome/30">
+            <span><span className="text-green/50">0–15</span> Low volatility, complacency</span>
+            <span><span className="text-yellow/50">15–25</span> Normal range</span>
+            <span><span className="text-magenta/50">25–35</span> Elevated fear</span>
+            <span><span className="text-magenta/50">35+</span> Extreme fear / crisis</span>
+          </div>
+        </div>
+      )}
     </SectionCard>
   )
 }

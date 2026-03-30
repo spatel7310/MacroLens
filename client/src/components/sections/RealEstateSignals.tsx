@@ -68,6 +68,9 @@ export function RealEstateSignals() {
             </div>
           </div>
         </div>
+        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          Mortgage rates follow the 10Y Treasury. Rising rates reduce buying power and cool home prices, while falling rates fuel demand. Rent CPI shows how shelter costs are driving inflation.
+        </p>
       </SectionCard>
 
       {showChart && (

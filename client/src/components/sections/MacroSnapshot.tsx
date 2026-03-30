@@ -121,6 +121,9 @@ export function MacroSnapshot() {
             </div>
           </MetricCell>
         </div>
+        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          CPI (Consumer Price Index) tracks the average change in prices paid by consumers. The Fed targets 2% annual inflation — above 3% is considered "hot" and may prompt rate hikes.
+        </p>
       </SectionCard>
 
       {chart && (

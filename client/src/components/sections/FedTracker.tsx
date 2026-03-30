@@ -65,6 +65,9 @@ export function FedTracker() {
             </div>
           </div>
         </div>
+        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          The federal funds rate is the interest rate banks charge each other overnight. The Fed raises it to cool inflation and cuts it to stimulate growth — it ripples through mortgages, car loans, and savings rates.
+        </p>
       </SectionCard>
 
       {showChart && (

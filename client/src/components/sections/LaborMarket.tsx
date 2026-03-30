@@ -107,6 +107,9 @@ export function LaborMarket() {
           <span className="ml-auto">vs 3mo Unemployment:</span>
           <span className="text-chrome/60 font-bold">{formatRate(data.unemployment.previous)}</span>
         </div>
+        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          Rising unemployment and increasing jobless claims signal a weakening economy. The Fed often watches these closely — a sharp rise in claims can foreshadow recession and trigger rate cuts.
+        </p>
       </SectionCard>
 
       {chart && (
