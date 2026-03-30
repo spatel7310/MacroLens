@@ -14,7 +14,7 @@ const glowClasses: Record<Accent, string> = {
   cyan: 'box-glow-cyan',
   green: 'box-glow-green',
   magenta: 'box-glow-magenta',
-  yellow: '',
+  yellow: 'box-glow-yellow',
 }
 
 export function SectionCard({

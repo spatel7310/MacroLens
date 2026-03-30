@@ -5,6 +5,8 @@ export const REFETCH_INTERVALS = {
   realEstate: 12 * 60 * 60_000,
   calendar: 2 * 60 * 60_000,
   news: 15 * 60_000,
+  labor: 6 * 60 * 60_000,
+  yieldCurve: 6 * 60 * 60_000,
 } as const
 
 export const VIX_THRESHOLDS = {

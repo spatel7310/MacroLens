@@ -64,6 +64,33 @@ export interface TriggeredAlert {
   dismissed: boolean
 }
 
+export interface LaborData {
+  unemployment: {
+    current: number
+    previous: number
+    trend: 'Rising' | 'Falling' | 'Stable'
+  }
+  claims: {
+    latest: number
+    fourWeekAvg: number
+    trend: 'Increasing' | 'Decreasing'
+  }
+  signal: 'Strong' | 'Stable' | 'Weakening'
+}
+
+export interface YieldCurveData {
+  treasury10Y: number
+  treasury2Y: number
+  spread: number
+  curveStatus: 'Normal' | 'Flattening' | 'Inverted'
+  recessionSignal: 'Normal' | 'Inversion (Warning)' | 'Recession Risk Rising'
+  sentiment: {
+    current: number
+    previous: number
+    trend: 'Rising' | 'Falling' | 'Stable'
+  }
+}
+
 export interface HistoryResponse {
   seriesId: string
   label: string

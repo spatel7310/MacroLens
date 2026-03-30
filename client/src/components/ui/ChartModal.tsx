@@ -4,32 +4,42 @@ import { useQuery } from '@tanstack/react-query'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts'
 import { api } from '@/lib/api'
 
-const RANGES = ['1M', '3M', '6M', '1Y'] as const
+const RANGES = ['1M', '3M', '6M', '1Y', '5Y', '15Y'] as const
 
 interface ChartModalProps {
   seriesId: string
   label: string
   color?: string
   defaultRange?: (typeof RANGES)[number]
+  formatValue?: (v: number) => string
   onClose: () => void
 }
 
-function formatDateLabel(date: string): string {
+function formatDateLabel(date: string, range: string): string {
   const d = new Date(date)
+  if (range === '5Y' || range === '15Y') {
+    return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+  }
+  if (range === '1Y') {
+    return d.toLocaleDateString('en-US', { month: 'short' })
+  }
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+const defaultFormatValue = (v: number) => `${v.toFixed(2)}%`
+
+function CustomTooltip({ active, payload, label, formatValue }: any) {
   if (!active || !payload?.length) return null
+  const fmt = formatValue || defaultFormatValue
   return (
     <div className="bg-void/95 border border-cyan/30 rounded px-3 py-2 text-xs">
       <p className="text-chrome/50">{label}</p>
-      <p className="text-cyan font-bold">{payload[0].value.toFixed(2)}%</p>
+      <p className="text-cyan font-bold">{fmt(payload[0].value)}</p>
     </div>
   )
 }
 
-export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = '3M', onClose }: ChartModalProps) {
+export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = '3M', formatValue, onClose }: ChartModalProps) {
   const [range, setRange] = useState<(typeof RANGES)[number]>(defaultRange)
 
   const { data, isLoading } = useQuery({
@@ -121,7 +131,7 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
                   </defs>
                   <XAxis
                     dataKey="date"
-                    tickFormatter={formatDateLabel}
+                    tickFormatter={(d: string) => formatDateLabel(d, range)}
                     tick={{ fill: '#a0a0b0', fontSize: 10 }}
                     axisLine={{ stroke: '#a0a0b020' }}
                     tickLine={false}
@@ -136,7 +146,7 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
                     width={40}
                     tickFormatter={(v: number) => v.toFixed(1)}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip formatValue={formatValue} />} />
                   <Area
                     type="monotone"
                     dataKey="value"
@@ -151,27 +161,27 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
           </div>
 
           {/* Current value */}
-          {chartData.length > 0 && (
-            <div className="px-4 pb-6 flex justify-between text-xs">
-              <div>
-                <span className="text-chrome/40">Current </span>
-                <span className="text-cyan font-bold">{chartData[chartData.length - 1].value.toFixed(2)}%</span>
+          {chartData.length > 0 && (() => {
+            const fmt = formatValue || defaultFormatValue
+            const current = chartData[chartData.length - 1].value
+            const change = current - chartData[0].value
+            return (
+              <div className="px-4 pb-6 flex justify-between text-xs">
+                <div>
+                  <span className="text-chrome/40">Current </span>
+                  <span className="text-cyan font-bold">{fmt(current)}</span>
+                </div>
+                <div>
+                  <span className="text-chrome/40">Change </span>
+                  <span
+                    className={`font-bold ${change >= 0 ? 'text-magenta' : 'text-green'}`}
+                  >
+                    {change >= 0 ? '+' : ''}{change.toFixed(2)}
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="text-chrome/40">Change </span>
-                <span
-                  className={`font-bold ${
-                    chartData[chartData.length - 1].value - chartData[0].value >= 0
-                      ? 'text-magenta'
-                      : 'text-green'
-                  }`}
-                >
-                  {chartData[chartData.length - 1].value - chartData[0].value >= 0 ? '+' : ''}
-                  {(chartData[chartData.length - 1].value - chartData[0].value).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          )}
+            )
+          })()}
         </motion.div>
       </motion.div>
     </AnimatePresence>

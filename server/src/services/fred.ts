@@ -85,6 +85,49 @@ export async function getRentTrendYoY(): Promise<number> {
   return ((latest - yearAgo) / yearAgo) * 100
 }
 
+export async function getUnemploymentRate(): Promise<{ current: number; previous: number; trend: 'Rising' | 'Falling' | 'Stable' }> {
+  const values = await getSeriesValues('UNRATE', 12)
+  if (values.length < 4) throw new Error('Not enough unemployment data')
+  const current = values[values.length - 1].value
+  // Compare to ~3 months ago
+  const prevIdx = Math.max(0, values.length - 4)
+  const previous = values[prevIdx].value
+  const diff = current - previous
+  const trend = Math.abs(diff) <= 0.2 ? 'Stable' : diff > 0 ? 'Rising' : 'Falling'
+  return { current, previous, trend }
+}
+
+export async function getJoblessClaims(): Promise<{ latest: number; fourWeekAvg: number; trend: 'Increasing' | 'Decreasing' }> {
+  const values = await getSeriesValues('ICSA', 8)
+  if (values.length < 5) throw new Error('Not enough claims data')
+  const latest = values[values.length - 1].value
+  // 4-week average from the 4 values prior to latest
+  const recentFour = values.slice(-5, -1)
+  const fourWeekAvg = recentFour.reduce((sum, v) => sum + v.value, 0) / recentFour.length
+  const trend = latest > fourWeekAvg ? 'Increasing' : 'Decreasing'
+  return { latest, fourWeekAvg: Math.round(fourWeekAvg), trend }
+}
+
+export async function getTreasury2Y(): Promise<number> {
+  return getSeriesValue('DGS2')
+}
+
+export async function getYieldCurveHistory(): Promise<{ date: string; value: number }[]> {
+  // Fetch ~12 months of the 10Y-2Y spread to detect past inversions
+  const values = await getSeriesValues('T10Y2Y', 365)
+  return values
+}
+
+export async function getConsumerSentiment(): Promise<{ current: number; previous: number; trend: 'Rising' | 'Falling' | 'Stable' }> {
+  const values = await getSeriesValues('UMCSENT', 6)
+  if (values.length < 2) throw new Error('Not enough sentiment data')
+  const current = values[values.length - 1].value
+  const previous = values[values.length - 2].value
+  const diff = current - previous
+  const trend = Math.abs(diff) <= 2 ? 'Stable' : diff > 0 ? 'Rising' : 'Falling'
+  return { current, previous, trend }
+}
+
 export async function getMortgageTrend(): Promise<'up' | 'down' | 'flat'> {
   const values = await getSeriesValues('MORTGAGE30US', 5)
   if (values.length < 2) return 'flat'

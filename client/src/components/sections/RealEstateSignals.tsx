@@ -13,7 +13,7 @@ export function RealEstateSignals() {
 
   if (isLoading) {
     return (
-      <SectionCard title="Real Estate Signals" accent="magenta">
+      <SectionCard title="Real Estate Signals" accent="green">
         <div className="space-y-3">
           <Skeleton className="h-8" />
           <Skeleton className="h-8" />
@@ -27,7 +27,7 @@ export function RealEstateSignals() {
 
   return (
     <>
-      <SectionCard title="Real Estate Signals" accent="magenta">
+      <SectionCard title="Real Estate Signals" accent="green">
         <div className="space-y-3">
           <div
             className="flex items-center justify-between active:bg-magenta/5 rounded-md -mx-1.5 px-1.5 -my-1 py-1 cursor-pointer"

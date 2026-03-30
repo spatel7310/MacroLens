@@ -9,6 +9,11 @@ const ALLOWED_SERIES: Record<string, string> = {
   MORTGAGE30US: '30Y Mortgage Rate',
   CPIAUCSL: 'CPI',
   DFEDTARU: 'Fed Funds Upper',
+  UNRATE: 'Unemployment Rate',
+  ICSA: 'Initial Jobless Claims',
+  DGS2: '2Y Treasury Yield',
+  T10Y2Y: '10Y-2Y Yield Spread',
+  UMCSENT: 'Consumer Sentiment',
 }
 
 const RANGE_LIMITS: Record<string, number> = {
@@ -16,6 +21,8 @@ const RANGE_LIMITS: Record<string, number> = {
   '3M': 90,
   '6M': 180,
   '1Y': 365,
+  '5Y': 1825,
+  '15Y': 5475,
 }
 
 router.get('/:seriesId', async (req, res) => {

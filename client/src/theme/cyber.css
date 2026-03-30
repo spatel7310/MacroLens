@@ -45,6 +45,9 @@
 .box-glow-magenta {
   box-shadow: 0 0 8px rgba(255, 42, 109, 0.15), inset 0 0 8px rgba(255, 42, 109, 0.05);
 }
+.box-glow-yellow {
+  box-shadow: 0 0 8px rgba(252, 238, 10, 0.15), inset 0 0 8px rgba(252, 238, 10, 0.05);
+}
 
 /* Glitch animation */
 @keyframes glitch {

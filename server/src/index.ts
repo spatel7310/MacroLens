@@ -11,6 +11,8 @@ import calendarRouter from './routes/calendar.js'
 import newsRouter from './routes/news.js'
 import historyRouter from './routes/history.js'
 import dealRouter from './routes/deal.js'
+import laborRouter from './routes/labor.js'
+import yieldCurveRouter from './routes/yieldCurve.js'
 
 const app = express()
 app.use(cors())
@@ -30,6 +32,8 @@ app.use('/api/calendar', calendarRouter)
 app.use('/api/news', newsRouter)
 app.use('/api/history', historyRouter)
 app.use('/api/deal', dealRouter)
+app.use('/api/labor', laborRouter)
+app.use('/api/yield-curve', yieldCurveRouter)
 
 const server = createServer(app)
 setupWebSocket(server)

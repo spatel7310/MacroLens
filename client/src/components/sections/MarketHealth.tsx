@@ -9,7 +9,7 @@ export function MarketHealth() {
 
   if (isLoading) {
     return (
-      <SectionCard title="Market Health" accent="green">
+      <SectionCard title="Market Health" accent="cyan">
         <Skeleton className="h-14" />
       </SectionCard>
     )
@@ -21,7 +21,7 @@ export function MarketHealth() {
   const vixColor = data.vix < 16 ? 'text-green' : data.vix < 25 ? 'text-yellow' : 'text-magenta'
 
   return (
-    <SectionCard title="Market Health" accent="green">
+    <SectionCard title="Market Health" accent="cyan">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[10px] text-chrome/50 uppercase tracking-wider">VIX</div>

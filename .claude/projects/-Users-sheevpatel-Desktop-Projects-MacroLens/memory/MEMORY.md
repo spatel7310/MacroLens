@@ -1,0 +1,1 @@
+- [V2 Roadmap Ideas](project_v2_roadmap.md) — Feature ideas, push notification strategy, and priorities for MacroLens v2

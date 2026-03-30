@@ -49,3 +49,19 @@ export function useNewsData() {
     refetchInterval: REFETCH_INTERVALS.news,
   })
 }
+
+export function useYieldCurveData() {
+  return useQuery({
+    queryKey: ['yield-curve'],
+    queryFn: api.yieldCurve,
+    refetchInterval: REFETCH_INTERVALS.yieldCurve,
+  })
+}
+
+export function useLaborData() {
+  return useQuery({
+    queryKey: ['labor'],
+    queryFn: api.labor,
+    refetchInterval: REFETCH_INTERVALS.labor,
+  })
+}
