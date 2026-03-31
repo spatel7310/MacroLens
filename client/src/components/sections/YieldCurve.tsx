@@ -5,7 +5,9 @@ import { TrendArrow } from '../ui/TrendArrow'
 import { GlowBadge } from '../ui/GlowBadge'
 import { Skeleton } from '../ui/Skeleton'
 import { ChartModal } from '../ui/ChartModal'
+import { CollapsibleDescription } from '../ui/CollapsibleDescription'
 import { useYieldCurveData } from '@/hooks/useMarketData'
+import { useDescriptionToggle } from '@/hooks/useDescriptionToggle'
 import { formatRate } from '@/lib/formatters'
 
 interface ChartTarget {
@@ -24,6 +26,7 @@ function InfoTip({ text }: { text: string }) {
 export function YieldCurve() {
   const { data, isLoading } = useYieldCurveData()
   const [chart, setChart] = useState<ChartTarget | null>(null)
+  const [descVisible, toggleDesc] = useDescriptionToggle('yield-curve')
 
   if (isLoading) {
     return (
@@ -56,7 +59,7 @@ export function YieldCurve() {
 
   return (
     <>
-      <SectionCard title="Yield Curve" accent="yellow">
+      <SectionCard title="Yield Curve" accent="yellow" onClick={toggleDesc}>
         {/* Curve Status + Recession Signal */}
         <div className="flex items-center justify-between mb-3">
           <GlowBadge variant={curveVariant}>{data.curveStatus}</GlowBadge>
@@ -65,75 +68,87 @@ export function YieldCurve() {
 
         {/* Treasury Yields + Spread */}
         <div className="grid grid-cols-3 gap-4 mb-1">
-          <div
-            className="flex flex-col gap-1 active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
-            onClick={() =>
-              setChart({ seriesId: 'DGS10', label: '10Y Treasury Yield', color: '#00f0ff' })
-            }
-          >
-            <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
-              10Y Yield
-              <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <NumberTicker value={data.treasury10Y} format={formatRate} className="text-sm font-bold text-chrome" />
+          <div className="flex flex-col gap-1">
+            <div
+              className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                setChart({ seriesId: 'DGS10', label: '10Y Treasury Yield', color: '#00f0ff' })
+              }}
+            >
+              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+                10Y Yield
+                <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <NumberTicker value={data.treasury10Y} format={formatRate} className="text-sm font-bold text-chrome" />
+            </div>
           </div>
 
-          <div
-            className="flex flex-col gap-1 active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
-            onClick={() =>
-              setChart({ seriesId: 'DGS2', label: '2Y Treasury Yield', color: '#05ffa1' })
-            }
-          >
-            <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
-              2Y Yield
-              <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <NumberTicker value={data.treasury2Y} format={formatRate} className="text-sm font-bold text-chrome" />
+          <div className="flex flex-col gap-1">
+            <div
+              className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                setChart({ seriesId: 'DGS2', label: '2Y Treasury Yield', color: '#05ffa1' })
+              }}
+            >
+              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+                2Y Yield
+                <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <NumberTicker value={data.treasury2Y} format={formatRate} className="text-sm font-bold text-chrome" />
+            </div>
           </div>
 
-          <div
-            className="flex flex-col gap-1 active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
-            onClick={() =>
-              setChart({
-                seriesId: 'T10Y2Y',
-                label: '10Y-2Y Yield Spread',
-                color: data.spread < 0 ? '#ff2a6d' : '#fcee0a',
-                formatValue: (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`,
-              })
-            }
-          >
-            <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
-              Spread
-              <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className={`text-sm font-bold ${spreadColor}`}>
-              {data.spread >= 0 ? '+' : ''}{data.spread.toFixed(2)}%
-            </span>
+          <div className="flex flex-col gap-1">
+            <div
+              className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                setChart({
+                  seriesId: 'T10Y2Y',
+                  label: '10Y-2Y Yield Spread',
+                  color: data.spread < 0 ? '#ff2a6d' : '#fcee0a',
+                  formatValue: (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`,
+                })
+              }}
+            >
+              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+                Spread
+                <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <span className={`text-sm font-bold ${spreadColor}`}>
+                {data.spread >= 0 ? '+' : ''}{data.spread.toFixed(2)}%
+              </span>
+            </div>
           </div>
         </div>
 
-        <InfoTip text="The yield curve compares short-term vs long-term bond rates. When long-term rates fall below short-term (inversion), it has historically preceded every U.S. recession in the past 50 years." />
+        <CollapsibleDescription visible={descVisible}>
+          <InfoTip text="The yield curve compares short-term vs long-term bond rates. When long-term rates fall below short-term (inversion), it has historically preceded every U.S. recession in the past 50 years." />
+        </CollapsibleDescription>
 
         {/* Consumer Sentiment */}
         <div className="mt-3 pt-3 border-t border-chrome/10">
-          <div
-            className="flex items-center justify-between active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
-            onClick={() =>
-              setChart({
-                seriesId: 'UMCSENT',
-                label: 'Consumer Sentiment Index',
-                color: '#fcee0a',
-                formatValue: (v: number) => v.toFixed(1),
-              })
-            }
-          >
-            <div>
+          <div className="flex items-center justify-between">
+            <div
+              className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation()
+                setChart({
+                  seriesId: 'UMCSENT',
+                  label: 'Consumer Sentiment Index',
+                  color: '#fcee0a',
+                  formatValue: (v: number) => v.toFixed(1),
+                })
+              }}
+            >
               <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
                 Consumer Sentiment
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -154,7 +169,9 @@ export function YieldCurve() {
               {data.sentiment.current >= 70 ? 'Optimistic' : data.sentiment.current >= 55 ? 'Cautious' : 'Pessimistic'}
             </GlowBadge>
           </div>
-          <InfoTip text="University of Michigan survey measuring how confident consumers feel about the economy. Higher values mean people feel comfortable spending, which drives ~70% of U.S. GDP." />
+          <CollapsibleDescription visible={descVisible}>
+            <InfoTip text="University of Michigan survey measuring how confident consumers feel about the economy. Higher values mean people feel comfortable spending, which drives ~70% of U.S. GDP." />
+          </CollapsibleDescription>
         </div>
       </SectionCard>
 

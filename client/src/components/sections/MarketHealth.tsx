@@ -1,13 +1,14 @@
-import { useState } from 'react'
 import { SectionCard } from '../ui/SectionCard'
 import { NumberTicker } from '../ui/NumberTicker'
 import { GlowBadge } from '../ui/GlowBadge'
 import { Skeleton } from '../ui/Skeleton'
+import { CollapsibleDescription } from '../ui/CollapsibleDescription'
 import { useMarketData } from '@/hooks/useMarketData'
+import { useDescriptionToggle } from '@/hooks/useDescriptionToggle'
 
 export function MarketHealth() {
   const { data, isLoading } = useMarketData()
-  const [showInfo, setShowInfo] = useState(true)
+  const [descVisible, toggleDesc] = useDescriptionToggle('market-health')
 
   if (isLoading) {
     return (
@@ -23,11 +24,8 @@ export function MarketHealth() {
   const vixColor = data.vix < 16 ? 'text-green' : data.vix < 25 ? 'text-yellow' : 'text-magenta'
 
   return (
-    <SectionCard title="Market Health" accent="cyan">
-      <div
-        className="flex items-center justify-between cursor-pointer active:bg-cyan/5 rounded-md -m-1.5 p-1.5"
-        onClick={() => setShowInfo(false)}
-      >
+    <SectionCard title="Market Health" accent="cyan" onClick={toggleDesc}>
+      <div className="flex items-center justify-between">
         <div>
           <div className="text-[10px] text-chrome/50 uppercase tracking-wider">VIX</div>
           <NumberTicker
@@ -38,7 +36,7 @@ export function MarketHealth() {
         </div>
         <GlowBadge variant={trendVariant}>{data.trend}</GlowBadge>
       </div>
-      {showInfo && (
+      <CollapsibleDescription visible={descVisible}>
         <div className="mt-2 space-y-1">
           <p className="text-[10px] text-chrome/35 leading-relaxed">
             The VIX measures expected market volatility over the next 30 days, often called the "fear gauge."
@@ -50,7 +48,7 @@ export function MarketHealth() {
             <span><span className="text-magenta/50">35+</span> Extreme fear / crisis</span>
           </div>
         </div>
-      )}
+      </CollapsibleDescription>
     </SectionCard>
   )
 }

@@ -51,7 +51,7 @@ export async function getMarketNews(keywords: string[]) {
     const text = `${item.headline} ${item.summary}`.toLowerCase()
     return keywordsLower.some((kw) => text.includes(kw))
   })
-  return filtered.slice(0, 5).map((item) => ({
+  return filtered.slice(0, 15).map((item) => ({
     title: item.headline,
     url: item.url,
     source: item.source,

@@ -5,7 +5,13 @@ import * as finnhub from '../services/finnhub.js'
 
 const router = Router()
 
-const NEWS_KEYWORDS = ['fed', 'inflation', 'housing', 'mortgage', 'interest rate', 'treasury', 'recession', 'employment']
+const NEWS_KEYWORDS = [
+  'fed', 'inflation', 'housing', 'mortgage', 'interest rate', 'treasury',
+  'recession', 'employment', 'economy', 'economic', 'stock', 'market',
+  'tariff', 'trade', 'gdp', 'jobs', 'labor', 'oil', 'crude', 'gold',
+  'dollar', 'yield', 'bond', 'rate', 'wall street', 'dow', 's&p', 'nasdaq',
+  'earnings', 'bank', 'crypto', 'bitcoin', 'geopolitical', 'sanctions',
+]
 
 router.get('/', async (_req, res) => {
   try {

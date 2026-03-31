@@ -20,10 +20,14 @@ const glowClasses: Record<Accent, string> = {
 export function SectionCard({
   title,
   accent = 'cyan',
+  onClick,
+  headerRight,
   children,
 }: {
   title: string
   accent?: Accent
+  onClick?: () => void
+  headerRight?: ReactNode
   children: ReactNode
 }) {
   return (
@@ -32,13 +36,17 @@ export function SectionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className={`rounded-lg border ${borderColors[accent]} ${glowClasses[accent]} bg-void/80 backdrop-blur-sm p-4`}
+      onClick={onClick}
     >
-      <h2
-        className={`text-xs font-bold uppercase tracking-[0.2em] mb-3 text-${accent} glow-${accent}`}
-        data-text={title}
-      >
-        {title}
-      </h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2
+          className={`text-xs font-bold uppercase tracking-[0.2em] text-${accent} glow-${accent}`}
+          data-text={title}
+        >
+          {title}
+        </h2>
+        {headerRight}
+      </div>
       {children}
     </motion.section>
   )

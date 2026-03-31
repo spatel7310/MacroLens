@@ -71,14 +71,16 @@
   height: 100%;
   opacity: 0;
 }
-.glitch:hover::before {
+.glitch:hover::before,
+.glitch.glitch-active::before {
   opacity: 0.8;
   color: var(--color-cyan);
   animation: glitch 0.3s ease-in-out;
   clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
   transform: translate(-2px);
 }
-.glitch:hover::after {
+.glitch:hover::after,
+.glitch.glitch-active::after {
   opacity: 0.8;
   color: var(--color-magenta);
   animation: glitch 0.3s ease-in-out reverse;

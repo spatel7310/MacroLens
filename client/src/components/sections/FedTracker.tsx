@@ -3,12 +3,15 @@ import { SectionCard } from '../ui/SectionCard'
 import { GlowBadge } from '../ui/GlowBadge'
 import { Skeleton } from '../ui/Skeleton'
 import { ChartModal } from '../ui/ChartModal'
+import { CollapsibleDescription } from '../ui/CollapsibleDescription'
 import { useFedData } from '@/hooks/useMarketData'
+import { useDescriptionToggle } from '@/hooks/useDescriptionToggle'
 import { formatRate } from '@/lib/formatters'
 
 export function FedTracker() {
   const { data, isLoading } = useFedData()
   const [showChart, setShowChart] = useState(false)
+  const [descVisible, toggleDesc] = useDescriptionToggle('fed-tracker')
 
   if (isLoading) {
     return (
@@ -28,7 +31,7 @@ export function FedTracker() {
 
   return (
     <>
-      <SectionCard title="Fed Tracker" accent="yellow">
+      <SectionCard title="Fed Tracker" accent="yellow" onClick={toggleDesc}>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div>
@@ -40,11 +43,11 @@ export function FedTracker() {
             </div>
           </div>
 
-          <div
-            className="flex items-center justify-between active:bg-yellow/5 rounded-md -mx-1.5 px-1.5 -my-1 py-1 cursor-pointer"
-            onClick={() => setShowChart(true)}
-          >
-            <div>
+          <div className="flex items-center justify-between">
+            <div
+              className="w-fit active:bg-yellow/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+              onClick={(e) => { e.stopPropagation(); setShowChart(true) }}
+            >
               <div className="text-[10px] text-chrome/50 uppercase tracking-wider">
                 Current Rate
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -65,9 +68,11 @@ export function FedTracker() {
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
-          The federal funds rate is the interest rate banks charge each other overnight. The Fed raises it to cool inflation and cuts it to stimulate growth — it ripples through mortgages, car loans, and savings rates.
-        </p>
+        <CollapsibleDescription visible={descVisible}>
+          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+            The federal funds rate is the interest rate banks charge each other overnight. The Fed raises it to cool inflation and cuts it to stimulate growth — it ripples through mortgages, car loans, and savings rates.
+          </p>
+        </CollapsibleDescription>
       </SectionCard>
 
       {showChart && (

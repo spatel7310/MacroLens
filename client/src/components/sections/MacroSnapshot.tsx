@@ -5,8 +5,10 @@ import { TrendArrow } from '../ui/TrendArrow'
 import { GlowBadge } from '../ui/GlowBadge'
 import { Skeleton } from '../ui/Skeleton'
 import { ChartModal } from '../ui/ChartModal'
+import { CollapsibleDescription } from '../ui/CollapsibleDescription'
 import { useMacroData } from '@/hooks/useMarketData'
 import { useRealtimeStore } from '@/stores/realtimeStore'
+import { useDescriptionToggle } from '@/hooks/useDescriptionToggle'
 import { formatPrice, formatPercent, formatRate } from '@/lib/formatters'
 
 function MetricCell({
@@ -17,22 +19,31 @@ function MetricCell({
 }: {
   label: string
   tappable?: boolean
-  onTap?: () => void
+  onTap?: (e: React.MouseEvent) => void
   children: React.ReactNode
 }) {
+  if (tappable) {
+    return (
+      <div className="flex flex-col gap-1">
+        <div
+          className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+          onClick={onTap}
+        >
+          <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+            {label}
+            <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
+              <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <div className="text-sm font-bold">{children}</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div
-      className={`flex flex-col gap-1 ${tappable ? 'active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer' : ''}`}
-      onClick={tappable ? onTap : undefined}
-    >
-      <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
-        {label}
-        {tappable && (
-          <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
-            <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
-      </span>
+    <div className="flex flex-col gap-1">
+      <span className="text-[10px] text-chrome/50 uppercase tracking-wider">{label}</span>
       <div className="text-sm font-bold">{children}</div>
     </div>
   )
@@ -48,6 +59,7 @@ export function MacroSnapshot() {
   const { data, isLoading } = useMacroData()
   const spyQuote = useRealtimeStore((s) => s.quotes['SPY'])
   const [chart, setChart] = useState<ChartTarget | null>(null)
+  const [descVisible, toggleDesc] = useDescriptionToggle('macro-snapshot')
 
   if (isLoading) {
     return (
@@ -68,7 +80,7 @@ export function MacroSnapshot() {
 
   return (
     <>
-      <SectionCard title="Macro Snapshot" accent="cyan">
+      <SectionCard title="Macro Snapshot" accent="cyan" onClick={toggleDesc}>
         <div className="grid grid-cols-2 gap-4">
           <MetricCell label="S&P 500">
             <div className="flex items-center gap-2">
@@ -83,7 +95,7 @@ export function MacroSnapshot() {
           <MetricCell
             label="10Y Treasury"
             tappable
-            onTap={() => setChart({ seriesId: 'DGS10', label: '10Y Treasury Yield', color: '#00f0ff' })}
+            onTap={(e) => { e.stopPropagation(); setChart({ seriesId: 'DGS10', label: '10Y Treasury Yield', color: '#00f0ff' }) }}
           >
             <div className="flex items-center gap-2">
               <NumberTicker value={data.treasury10Y} format={(n) => formatRate(n)} className="text-chrome" />
@@ -97,7 +109,7 @@ export function MacroSnapshot() {
           <MetricCell
             label="30Y Mortgage"
             tappable
-            onTap={() => setChart({ seriesId: 'MORTGAGE30US', label: '30Y Mortgage Rate', color: '#05ffa1' })}
+            onTap={(e) => { e.stopPropagation(); setChart({ seriesId: 'MORTGAGE30US', label: '30Y Mortgage Rate', color: '#05ffa1' }) }}
           >
             <NumberTicker value={data.mortgageRate} format={(n) => formatRate(n)} className="text-chrome" />
           </MetricCell>
@@ -111,7 +123,7 @@ export function MacroSnapshot() {
           <MetricCell
             label="CPI YoY"
             tappable
-            onTap={() => setChart({ seriesId: 'CPIAUCSL', label: 'CPI (Consumer Price Index)', color: '#fcee0a' })}
+            onTap={(e) => { e.stopPropagation(); setChart({ seriesId: 'CPIAUCSL', label: 'CPI (Consumer Price Index)', color: '#fcee0a' }) }}
           >
             <div className="flex items-center gap-2">
               <NumberTicker value={data.cpiYoY} format={(n) => formatPercent(n)} className="text-chrome" />
@@ -121,9 +133,11 @@ export function MacroSnapshot() {
             </div>
           </MetricCell>
         </div>
-        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
-          CPI (Consumer Price Index) tracks the average change in prices paid by consumers. The Fed targets 2% annual inflation — above 3% is considered "hot" and may prompt rate hikes.
-        </p>
+        <CollapsibleDescription visible={descVisible}>
+          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+            CPI (Consumer Price Index) tracks the average change in prices paid by consumers. The Fed targets 2% annual inflation — above 3% is considered "hot" and may prompt rate hikes.
+          </p>
+        </CollapsibleDescription>
       </SectionCard>
 
       {chart && (

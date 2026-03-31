@@ -4,12 +4,15 @@ import { NumberTicker } from '../ui/NumberTicker'
 import { TrendArrow } from '../ui/TrendArrow'
 import { Skeleton } from '../ui/Skeleton'
 import { ChartModal } from '../ui/ChartModal'
+import { CollapsibleDescription } from '../ui/CollapsibleDescription'
 import { useRealEstateData } from '@/hooks/useMarketData'
+import { useDescriptionToggle } from '@/hooks/useDescriptionToggle'
 import { formatRate, formatPercent } from '@/lib/formatters'
 
 export function RealEstateSignals() {
   const { data, isLoading } = useRealEstateData()
   const [showChart, setShowChart] = useState(false)
+  const [descVisible, toggleDesc] = useDescriptionToggle('real-estate')
 
   if (isLoading) {
     return (
@@ -27,23 +30,21 @@ export function RealEstateSignals() {
 
   return (
     <>
-      <SectionCard title="Real Estate Signals" accent="green">
+      <SectionCard title="Real Estate Signals" accent="green" onClick={toggleDesc}>
         <div className="space-y-3">
           <div
-            className="flex items-center justify-between active:bg-magenta/5 rounded-md -mx-1.5 px-1.5 -my-1 py-1 cursor-pointer"
-            onClick={() => setShowChart(true)}
+            className="w-fit active:bg-magenta/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); setShowChart(true) }}
           >
-            <div>
-              <div className="text-[10px] text-chrome/50 uppercase tracking-wider">
-                30Y Mortgage
-                <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                  <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <div className="flex items-center gap-2">
-                <NumberTicker value={data.mortgageRate} format={(n) => formatRate(n)} className="text-sm font-bold text-chrome" />
-                <TrendArrow direction={data.mortgageTrend} />
-              </div>
+            <div className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              30Y Mortgage
+              <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <div className="flex items-center gap-2">
+              <NumberTicker value={data.mortgageRate} format={(n) => formatRate(n)} className="text-sm font-bold text-chrome" />
+              <TrendArrow direction={data.mortgageTrend} />
             </div>
           </div>
 
@@ -68,9 +69,11 @@ export function RealEstateSignals() {
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
-          Mortgage rates follow the 10Y Treasury. Rising rates reduce buying power and cool home prices, while falling rates fuel demand. Rent CPI shows how shelter costs are driving inflation.
-        </p>
+        <CollapsibleDescription visible={descVisible}>
+          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+            Mortgage rates follow the 10Y Treasury. Rising rates reduce buying power and cool home prices, while falling rates fuel demand. Rent CPI shows how shelter costs are driving inflation.
+          </p>
+        </CollapsibleDescription>
       </SectionCard>
 
       {showChart && (
