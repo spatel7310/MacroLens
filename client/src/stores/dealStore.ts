@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { DealInputs, DealResults, SFRInputs, SFRResults, AreaLookup, SavedDeal, DealTab } from '@/types'
+import type { DealInputs, DealResults, SFRInputs, SFRResults, AreaLookup, SavedDeal, DealTab, ExpenseOverrides } from '@/types'
 
 const DEFAULT_MF_INPUTS: DealInputs = {
   units: 0,
@@ -35,6 +35,9 @@ interface DealState {
   setActiveTab: (tab: DealTab) => void
   updateInputs: (partial: Partial<DealInputs>) => void
   updateSFRInputs: (partial: Partial<SFRInputs>) => void
+  updateMFExpenseOverride: (key: keyof ExpenseOverrides, value: number | undefined) => void
+  updateSFRExpenseOverride: (key: keyof ExpenseOverrides, value: number | undefined) => void
+  clearExpenseOverrides: () => void
   setAddress: (v: string) => void
   setAreaData: (v: AreaLookup | null) => void
   setTargetCapRate: (v: number) => void
@@ -61,6 +64,25 @@ export const useDealStore = create<DealState>()(
         set((state) => ({ inputs: { ...state.inputs, ...partial } })),
       updateSFRInputs: (partial) =>
         set((state) => ({ sfrInputs: { ...state.sfrInputs, ...partial } })),
+      updateMFExpenseOverride: (key, value) =>
+        set((state) => ({
+          inputs: {
+            ...state.inputs,
+            expenseOverrides: { ...state.inputs.expenseOverrides, [key]: value },
+          },
+        })),
+      updateSFRExpenseOverride: (key, value) =>
+        set((state) => ({
+          sfrInputs: {
+            ...state.sfrInputs,
+            expenseOverrides: { ...state.sfrInputs.expenseOverrides, [key]: value },
+          },
+        })),
+      clearExpenseOverrides: () =>
+        set((state) => ({
+          inputs: { ...state.inputs, expenseOverrides: undefined },
+          sfrInputs: { ...state.sfrInputs, expenseOverrides: undefined },
+        })),
       setAddress: (v) => set({ address: v }),
       setAreaData: (v) => set({ areaData: v }),
       setTargetCapRate: (v) => set({ targetCapRate: v }),

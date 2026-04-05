@@ -1,4 +1,4 @@
-import type { DealInputs, DealResults, SFRInputs, SFRResults, AreaLookup } from '@/types'
+import type { DealInputs, DealResults, SFRInputs, SFRResults, AreaLookup, ExpenseOverrides } from '@/types'
 
 // --- Regional assumptions ---
 
@@ -34,6 +34,31 @@ function getRegion(state: string): RegionalAssumptions {
   return REGIONAL_DEFAULTS[key]
 }
 
+export function getMFExpenseDefaults(state: string): ExpenseOverrides {
+  const r = getRegion(state)
+  return {
+    vacancyPct: VACANCY * 100,
+    taxRate: r.taxRate,
+    insurancePerUnit: r.insurancePerUnit,
+    maintenancePct: r.maintenancePct,
+    capexPct: r.capexPct,
+    utilitiesPct: UTILITIES * 100,
+    otherPct: OTHER * 100,
+  }
+}
+
+export function getSFRExpenseDefaults(state: string): ExpenseOverrides {
+  const r = getSFRRegion(state)
+  return {
+    vacancyPct: SFR_VACANCY * 100,
+    taxRate: r.taxRate,
+    insurancePerUnit: r.insuranceAnnual,
+    maintenancePct: r.maintenancePct,
+    capexPct: r.capexPct,
+    otherPct: SFR_OTHER * 100,
+  }
+}
+
 function calcMonthlyPayment(principal: number, annualRate: number, years: number): number {
   if (principal <= 0) return 0
   const r = annualRate / 100 / 12
@@ -46,19 +71,21 @@ function calcMonthlyPayment(principal: number, annualRate: number, years: number
 
 export function calculateDeal(inputs: DealInputs, effectiveRate: number, stressTest = false): DealResults {
   const region = getRegion(inputs.location)
+  const ov = inputs.expenseOverrides ?? {}
 
   const rentMultiplier = stressTest ? 0.90 : 1
   const expenseMultiplier = stressTest ? 1.10 : 1
 
+  const vacancyRate = (ov.vacancyPct ?? VACANCY * 100) / 100
   const grossPotentialRent = inputs.units * inputs.avgRentPerUnit * 12 * rentMultiplier
-  const effectiveGrossIncome = grossPotentialRent * (1 - VACANCY)
+  const effectiveGrossIncome = grossPotentialRent * (1 - vacancyRate)
 
-  const taxes = inputs.purchasePrice * region.taxRate / 100 * expenseMultiplier
-  const insurance = region.insurancePerUnit * inputs.units * expenseMultiplier
-  const maintenance = grossPotentialRent * region.maintenancePct / 100 * expenseMultiplier
-  const capex = grossPotentialRent * region.capexPct / 100 * expenseMultiplier
-  const utilities = grossPotentialRent * UTILITIES * expenseMultiplier
-  const other = grossPotentialRent * OTHER * expenseMultiplier
+  const taxes = inputs.purchasePrice * (ov.taxRate ?? region.taxRate) / 100 * expenseMultiplier
+  const insurance = (ov.insurancePerUnit ?? region.insurancePerUnit) * inputs.units * expenseMultiplier
+  const maintenance = grossPotentialRent * (ov.maintenancePct ?? region.maintenancePct) / 100 * expenseMultiplier
+  const capex = grossPotentialRent * (ov.capexPct ?? region.capexPct) / 100 * expenseMultiplier
+  const utilities = grossPotentialRent * (ov.utilitiesPct ?? UTILITIES * 100) / 100 * expenseMultiplier
+  const other = grossPotentialRent * (ov.otherPct ?? OTHER * 100) / 100 * expenseMultiplier
   const totalOperatingExpenses = taxes + insurance + maintenance + capex + utilities + other
 
   const noi = effectiveGrossIncome - totalOperatingExpenses
@@ -149,19 +176,21 @@ export function estimateRentFromFMR(beds: number, fmr: AreaLookup['fmr']): numbe
 
 export function calculateSFR(inputs: SFRInputs, effectiveRate: number, stressTest = false): SFRResults {
   const region = getSFRRegion(inputs.location)
+  const ov = inputs.expenseOverrides ?? {}
   const monthlyRent = inputs.monthlyRent ?? 0
 
   const rentMultiplier = stressTest ? 0.90 : 1
   const expenseMultiplier = stressTest ? 1.10 : 1
 
+  const vacancyRate = (ov.vacancyPct ?? SFR_VACANCY * 100) / 100
   const grossAnnualRent = monthlyRent * 12 * rentMultiplier
-  const effectiveGrossIncome = grossAnnualRent * (1 - SFR_VACANCY)
+  const effectiveGrossIncome = grossAnnualRent * (1 - vacancyRate)
 
-  const taxes = inputs.purchasePrice * region.taxRate / 100 * expenseMultiplier
-  const insurance = region.insuranceAnnual * expenseMultiplier
-  const maintenance = grossAnnualRent * region.maintenancePct / 100 * expenseMultiplier
-  const capex = grossAnnualRent * region.capexPct / 100 * expenseMultiplier
-  const other = grossAnnualRent * SFR_OTHER * expenseMultiplier
+  const taxes = inputs.purchasePrice * (ov.taxRate ?? region.taxRate) / 100 * expenseMultiplier
+  const insurance = (ov.insurancePerUnit ?? region.insuranceAnnual) * expenseMultiplier
+  const maintenance = grossAnnualRent * (ov.maintenancePct ?? region.maintenancePct) / 100 * expenseMultiplier
+  const capex = grossAnnualRent * (ov.capexPct ?? region.capexPct) / 100 * expenseMultiplier
+  const other = grossAnnualRent * (ov.otherPct ?? SFR_OTHER * 100) / 100 * expenseMultiplier
   const totalOperatingExpenses = taxes + insurance + maintenance + capex + other
 
   const noi = effectiveGrossIncome - totalOperatingExpenses
@@ -219,14 +248,16 @@ export function sfrMaxOfferByCoC(
   targetCoC: number,
 ): number {
   const region = getSFRRegion(inputs.location)
+  const ov = inputs.expenseOverrides ?? {}
   const monthlyRent = inputs.monthlyRent ?? 0
   const grossAnnualRent = monthlyRent * 12
-  const effectiveGrossIncome = grossAnnualRent * (1 - SFR_VACANCY)
+  const vacancyRate = (ov.vacancyPct ?? SFR_VACANCY * 100) / 100
+  const effectiveGrossIncome = grossAnnualRent * (1 - vacancyRate)
 
-  const insurance = region.insuranceAnnual
-  const maintenance = grossAnnualRent * region.maintenancePct / 100
-  const capex = grossAnnualRent * region.capexPct / 100
-  const other = grossAnnualRent * SFR_OTHER
+  const insurance = ov.insurancePerUnit ?? region.insuranceAnnual
+  const maintenance = grossAnnualRent * (ov.maintenancePct ?? region.maintenancePct) / 100
+  const capex = grossAnnualRent * (ov.capexPct ?? region.capexPct) / 100
+  const other = grossAnnualRent * (ov.otherPct ?? SFR_OTHER * 100) / 100
   const noiBase = effectiveGrossIncome - insurance - maintenance - capex - other
 
   const d = inputs.downPaymentPercent / 100
@@ -234,7 +265,8 @@ export function sfrMaxOfferByCoC(
   const n = inputs.loanTermYears * 12
   const A = r === 0 ? 1 / n : (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
 
-  const denominator = targetCoC * d + region.taxRate / 100 + (1 - d) * 12 * A
+  const taxRate = (ov.taxRate ?? region.taxRate) / 100
+  const denominator = targetCoC * d + taxRate + (1 - d) * 12 * A
   if (denominator <= 0) return 0
   return noiBase / denominator
 }
@@ -245,15 +277,17 @@ export function maxOfferByCoC(
   targetCoC: number,
 ): number {
   const region = getRegion(inputs.location)
+  const ov = inputs.expenseOverrides ?? {}
   const grossPotentialRent = inputs.units * inputs.avgRentPerUnit * 12
-  const effectiveGrossIncome = grossPotentialRent * (1 - VACANCY)
+  const vacancyRate = (ov.vacancyPct ?? VACANCY * 100) / 100
+  const effectiveGrossIncome = grossPotentialRent * (1 - vacancyRate)
 
   // NOI components that don't depend on price
-  const insurance = region.insurancePerUnit * inputs.units
-  const maintenance = grossPotentialRent * region.maintenancePct / 100
-  const capex = grossPotentialRent * region.capexPct / 100
-  const utilities = grossPotentialRent * UTILITIES
-  const other = grossPotentialRent * OTHER
+  const insurance = (ov.insurancePerUnit ?? region.insurancePerUnit) * inputs.units
+  const maintenance = grossPotentialRent * (ov.maintenancePct ?? region.maintenancePct) / 100
+  const capex = grossPotentialRent * (ov.capexPct ?? region.capexPct) / 100
+  const utilities = grossPotentialRent * (ov.utilitiesPct ?? UTILITIES * 100) / 100
+  const other = grossPotentialRent * (ov.otherPct ?? OTHER * 100) / 100
   const noiBase = effectiveGrossIncome - insurance - maintenance - capex - utilities - other
 
   // NOI(P) = noiBase - P * taxRate/100
@@ -266,7 +300,8 @@ export function maxOfferByCoC(
   const n = inputs.loanTermYears * 12
   const A = r === 0 ? 1 / n : (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
 
-  const denominator = targetCoC * d + region.taxRate / 100 + (1 - d) * 12 * A
+  const taxRate = (ov.taxRate ?? region.taxRate) / 100
+  const denominator = targetCoC * d + taxRate + (1 - d) * 12 * A
   if (denominator <= 0) return 0
   return noiBase / denominator
 }

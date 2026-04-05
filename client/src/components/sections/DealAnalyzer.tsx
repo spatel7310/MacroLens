@@ -6,7 +6,9 @@ import { useDealStore } from '@/stores/dealStore'
 import {
   calculateDeal, maxOfferByCapRate, maxOfferByCoC,
   calculateSFR, sfrMaxOfferByCapRate, sfrMaxOfferByCoC, estimateRentFromFMR,
+  getMFExpenseDefaults, getSFRExpenseDefaults,
 } from '@/lib/dealCalculator'
+import type { ExpenseOverrides } from '@/types'
 import { api } from '@/lib/api'
 import type { DealTab, DealResults, SFRResults } from '@/types'
 
@@ -109,6 +111,177 @@ function Divider() {
   return <div className="border-t border-green/10 my-4" />
 }
 
+const expInputClass = 'w-[4.5rem] h-7 bg-void border rounded px-2 text-xs text-right outline-none focus:border-green/50'
+
+function ExpenseInput({ value, isCustom, onChange }: {
+  value: string; isCustom: boolean; onChange: (raw: string) => void
+}) {
+  const [local, setLocal] = useState(value)
+  const focused = useRef(false)
+  useEffect(() => { if (!focused.current) setLocal(value) }, [value])
+  return (
+    <input
+      type="text"
+      inputMode="decimal"
+      value={local}
+      onFocus={() => { focused.current = true }}
+      onBlur={() => { focused.current = false; setLocal(value) }}
+      onChange={(e) => { const r = e.target.value.replace(/[^0-9.]/g, ''); setLocal(r); onChange(r) }}
+      className={`${expInputClass} ${isCustom ? 'border-green/40 text-green' : 'border-chrome/10 text-chrome/60'}`}
+    />
+  )
+}
+
+function DualExpenseRow({ label, pctValue, pctDefault, dollarBase, pctKey, onUpdate }: {
+  label: string
+  pctValue: number | undefined
+  pctDefault: number
+  dollarBase: number
+  pctKey: keyof ExpenseOverrides
+  onUpdate: (key: keyof ExpenseOverrides, value: number | undefined) => void
+}) {
+  const pct = pctValue ?? pctDefault
+  const dollar = Math.round(dollarBase * pct / 100)
+  const isCustom = pctValue !== undefined
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">{label}</span>
+      <ExpenseInput
+        value={isCustom ? String(pct) : String(pctDefault)}
+        isCustom={isCustom}
+        onChange={(raw) => onUpdate(pctKey, raw === '' ? undefined : parseFloat(raw) || 0)}
+      />
+      <span className="text-[10px] text-chrome/30 w-3">%</span>
+      <ExpenseInput
+        value={fmtNum.format(dollar)}
+        isCustom={isCustom}
+        onChange={(raw) => {
+          const num = parseInt(raw.replace(/,/g, '')) || 0
+          if (dollarBase > 0) {
+            const newPct = Math.round((num / dollarBase) * 10000) / 100
+            onUpdate(pctKey, newPct)
+          }
+        }}
+      />
+      <span className="text-[10px] text-chrome/30 w-5">$/yr</span>
+    </div>
+  )
+}
+
+function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice, units, onUpdate, onClear }: {
+  overrides: ExpenseOverrides | undefined
+  defaults: ExpenseOverrides
+  isMF: boolean
+  grossRent: number
+  purchasePrice: number
+  units: number
+  onUpdate: (key: keyof ExpenseOverrides, value: number | undefined) => void
+  onClear: () => void
+}) {
+  const [open, setOpen] = useState(false)
+  const hasOverrides = overrides && Object.values(overrides).some((v) => v !== undefined)
+
+  const vacPct = overrides?.vacancyPct ?? defaults.vacancyPct!
+  const isVacCustom = overrides?.vacancyPct !== undefined
+  const insVal = overrides?.insurancePerUnit ?? defaults.insurancePerUnit!
+  const isInsCustom = overrides?.insurancePerUnit !== undefined
+  const totalIns = isMF ? insVal * units : insVal
+
+  return (
+    <div className="mt-3">
+      <button
+        onClick={() => setOpen(!open)}
+        className={`w-full flex items-center justify-between text-[10px] uppercase tracking-wider font-bold py-1.5 transition-colors ${
+          hasOverrides ? 'text-green/70' : 'text-chrome/30 active:text-chrome/50'
+        }`}
+      >
+        <span>
+          Customize Expenses
+          {hasOverrides && <span className="text-green/50 normal-case tracking-normal ml-1">(custom)</span>}
+        </span>
+        <span className="text-sm">{open ? '−' : '+'}</span>
+      </button>
+
+      {open && (
+        <div className="space-y-1.5 mt-1 rounded border border-green/10 bg-green/[0.02] px-3 py-2.5">
+          {/* Header */}
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="flex-1" />
+            <span className="w-[4.5rem] text-[9px] text-chrome/30 text-right">%</span>
+            <span className="w-3" />
+            <span className="w-[4.5rem] text-[9px] text-chrome/30 text-right">$/yr</span>
+            <span className="w-5" />
+          </div>
+
+          {/* Vacancy — % only */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">Vacancy</span>
+            <ExpenseInput
+              value={isVacCustom ? String(vacPct) : String(defaults.vacancyPct!)}
+              isCustom={isVacCustom}
+              onChange={(raw) => onUpdate('vacancyPct', raw === '' ? undefined : parseFloat(raw) || 0)}
+            />
+            <span className="text-[10px] text-chrome/30 w-3">%</span>
+            <span className="w-[4.5rem] text-[10px] text-chrome/25 text-right">{fmtNum.format(Math.round(grossRent * vacPct / 100))}</span>
+            <span className="text-[10px] text-chrome/25 w-5">$/yr</span>
+          </div>
+
+          {/* Tax — % of purchase price */}
+          <DualExpenseRow label="Taxes" pctValue={overrides?.taxRate} pctDefault={defaults.taxRate!} dollarBase={purchasePrice} pctKey="taxRate" onUpdate={onUpdate} />
+
+          {/* Insurance — dollar amount */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">Insurance{isMF ? ' /unit' : ''}</span>
+            <span className="w-[4.5rem]" />
+            <span className="w-3" />
+            <ExpenseInput
+              value={fmtNum.format(insVal)}
+              isCustom={isInsCustom}
+              onChange={(raw) => {
+                const num = parseInt(raw.replace(/,/g, '')) || 0
+                onUpdate('insurancePerUnit', num === defaults.insurancePerUnit! ? undefined : num)
+              }}
+            />
+            <span className="text-[10px] text-chrome/30 w-5">{isMF ? '$/u' : '$/yr'}</span>
+          </div>
+          {isMF && units > 1 && (
+            <div className="flex items-center gap-1.5 -mt-0.5">
+              <span className="flex-1" />
+              <span className="w-[4.5rem]" />
+              <span className="w-3" />
+              <span className="w-[4.5rem] text-[10px] text-chrome/25 text-right">{fmtNum.format(totalIns)}</span>
+              <span className="text-[10px] text-chrome/25 w-5">total</span>
+            </div>
+          )}
+
+          {/* Maintenance — % of rent */}
+          <DualExpenseRow label="Maintenance" pctValue={overrides?.maintenancePct} pctDefault={defaults.maintenancePct!} dollarBase={grossRent} pctKey="maintenancePct" onUpdate={onUpdate} />
+
+          {/* CapEx — % of rent */}
+          <DualExpenseRow label="CapEx Reserve" pctValue={overrides?.capexPct} pctDefault={defaults.capexPct!} dollarBase={grossRent} pctKey="capexPct" onUpdate={onUpdate} />
+
+          {/* Utilities — % of rent (MF only) */}
+          {isMF && (
+            <DualExpenseRow label="Utilities" pctValue={overrides?.utilitiesPct} pctDefault={defaults.utilitiesPct!} dollarBase={grossRent} pctKey="utilitiesPct" onUpdate={onUpdate} />
+          )}
+
+          {/* Other — % of rent */}
+          <DualExpenseRow label="Other" pctValue={overrides?.otherPct} pctDefault={defaults.otherPct!} dollarBase={grossRent} pctKey="otherPct" onUpdate={onUpdate} />
+
+          {hasOverrides && (
+            <button
+              onClick={onClear}
+              className="text-[10px] text-chrome/30 uppercase tracking-wider active:text-magenta mt-1"
+            >
+              Reset to Defaults
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function TabSwitcher({ active, onChange }: { active: DealTab; onChange: (t: DealTab) => void }) {
   const tabs: { key: DealTab; label: string }[] = [
     { key: 'multifamily', label: 'Multifamily' },
@@ -183,7 +356,9 @@ export function DealAnalyzer() {
   }, [sfrInputs, sfrEffectiveRate, stressTest])
 
   const results = activeTab === 'multifamily' ? mfResults : sfrResults
-  const effectiveRate = activeTab === 'multifamily' ? mfEffectiveRate : sfrEffectiveRate
+
+  const mfExpenseDefaults = useMemo(() => getMFExpenseDefaults(inputs.location), [inputs.location])
+  const sfrExpenseDefaults = useMemo(() => getSFRExpenseDefaults(sfrInputs.location), [sfrInputs.location])
 
   const maxCapPrice = useMemo(() => {
     if (!results || targetCapRate <= 0) return null
@@ -254,17 +429,11 @@ export function DealAnalyzer() {
           <div className="text-[10px] text-green/60 uppercase tracking-wider mb-2">
             {areaData.geo.stateAbbr} &middot; {areaData.geo.zip}
           </div>
-          <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-2 text-xs">
             {areaData.census?.medianIncome && (
               <div>
                 <div className="text-chrome/40 text-[9px] uppercase">Med. Income</div>
                 <div className="text-chrome font-bold">{fmt.format(areaData.census.medianIncome)}</div>
-              </div>
-            )}
-            {areaData.census?.medianRent && (
-              <div>
-                <div className="text-chrome/40 text-[9px] uppercase">Med. Rent</div>
-                <div className="text-chrome font-bold">{fmt.format(areaData.census.medianRent)}/mo</div>
               </div>
             )}
             {areaData.census?.population && (
@@ -292,7 +461,7 @@ export function DealAnalyzer() {
       <Divider />
 
       {/* ── Multifamily Inputs ── */}
-      {activeTab === 'multifamily' && (
+      {activeTab === 'multifamily' && (<>
         <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
           <Field label="Units">
             <NumInput value={inputs.units} onChange={(v) => store.updateInputs({ units: v })} />
@@ -329,10 +498,20 @@ export function DealAnalyzer() {
             </Field>
           </div>
         </div>
-      )}
+        <ExpenseCustomizer
+          overrides={inputs.expenseOverrides}
+          defaults={mfExpenseDefaults}
+          isMF={true}
+          grossRent={inputs.units * inputs.avgRentPerUnit * 12}
+          purchasePrice={inputs.purchasePrice}
+          units={inputs.units}
+          onUpdate={store.updateMFExpenseOverride}
+          onClear={() => store.updateInputs({ expenseOverrides: undefined })}
+        />
+      </>)}
 
       {/* ── SFR Inputs ── */}
-      {activeTab === 'sfr' && (
+      {activeTab === 'sfr' && (<>
         <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
           <Field label="Bedrooms">
             <select value={sfrInputs.beds} onChange={(e) => store.updateSFRInputs({ beds: parseInt(e.target.value) })} className={inputClass}>
@@ -379,7 +558,17 @@ export function DealAnalyzer() {
             </Field>
           </div>
         </div>
-      )}
+        <ExpenseCustomizer
+          overrides={sfrInputs.expenseOverrides}
+          defaults={sfrExpenseDefaults}
+          isMF={false}
+          grossRent={(sfrInputs.monthlyRent ?? 0) * 12}
+          purchasePrice={sfrInputs.purchasePrice}
+          units={1}
+          onUpdate={store.updateSFRExpenseOverride}
+          onClear={() => store.updateSFRInputs({ expenseOverrides: undefined })}
+        />
+      </>)}
 
       {/* ── Actions ── */}
       <div className="flex items-center gap-3 mt-3">

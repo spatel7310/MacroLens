@@ -98,6 +98,16 @@ export interface HistoryResponse {
   data: { date: string; value: number }[]
 }
 
+export interface ExpenseOverrides {
+  vacancyPct?: number        // default 10% MF, 8% SFR
+  taxRate?: number           // % of purchase price
+  insurancePerUnit?: number  // MF: $/unit/yr, SFR: $/yr total
+  maintenancePct?: number    // % of gross rent (ongoing repairs)
+  capexPct?: number          // % of gross rent (capital reserves)
+  utilitiesPct?: number      // % of gross rent (MF only)
+  otherPct?: number          // % of gross rent
+}
+
 export interface DealInputs {
   units: number
   purchasePrice: number
@@ -106,6 +116,7 @@ export interface DealInputs {
   downPaymentPercent: number
   loanTermYears: number
   interestRateOverride: number | null
+  expenseOverrides?: ExpenseOverrides
 }
 
 export interface DealResults {
@@ -140,6 +151,7 @@ export interface SFRInputs {
   downPaymentPercent: number
   loanTermYears: number
   interestRateOverride: number | null
+  expenseOverrides?: ExpenseOverrides
 }
 
 export interface SFRResults {
