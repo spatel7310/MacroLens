@@ -14,6 +14,7 @@ const ALLOWED_SERIES: Record<string, string> = {
   DGS2: '2Y Treasury Yield',
   T10Y2Y: '10Y-2Y Yield Spread',
   UMCSENT: 'Consumer Sentiment',
+  VIXCLS: 'CBOE Volatility Index (VIX)',
 }
 
 const RANGE_LIMITS: Record<string, number> = {

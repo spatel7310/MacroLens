@@ -1,17 +1,18 @@
 import { Router } from 'express'
 import { withCache } from '../services/cache.js'
 import { config } from '../config.js'
-import * as finnhub from '../services/finnhub.js'
+import * as fred from '../services/fred.js'
 
 const router = Router()
 
 router.get('/', async (_req, res) => {
   try {
-    const data = await withCache('market', config.cacheTTL.quotes, async () => {
-      // Use UVXY as VIX proxy since VIX itself isn't directly quotable on Finnhub free tier
-      // Alternatively use ^VIX or VIXY
-      const vixQuote = await finnhub.getQuote('VIXY')
-      const vix = vixQuote.price
+    const data = await withCache('market', config.cacheTTL.fred, async () => {
+      const vixValues = await fred.getSeriesValues('VIXCLS', 5)
+      if (vixValues.length < 2) throw new Error('Not enough VIX data')
+      const vix = vixValues[vixValues.length - 1].value
+      const prevVix = vixValues[vixValues.length - 2].value
+      const vixChange = prevVix !== 0 ? ((vix - prevVix) / prevVix) * 100 : 0
 
       let trend: 'Risk-On' | 'Caution' | 'Risk-Off'
       if (vix < 16) trend = 'Risk-On'
@@ -20,7 +21,7 @@ router.get('/', async (_req, res) => {
 
       return {
         vix,
-        vixChange: vixQuote.changePercent,
+        vixChange: Math.round(vixChange * 100) / 100,
         trend,
       }
     })

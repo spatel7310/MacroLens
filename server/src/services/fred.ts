@@ -36,12 +36,12 @@ export async function getSeriesValues(seriesId: string, count: number): Promise<
 }
 
 export async function getTreasury10Y(): Promise<{ value: number; change: number }> {
-  // Fetch ~30 observations to get roughly a month of data
-  const obs = await getLatestObservation('DGS10', 30)
-  if (!obs.length) throw new Error('No data for DGS10')
+  // Fetch 2 most recent observations for daily change
+  const obs = await getLatestObservation('DGS10', 5)
+  if (obs.length < 2) throw new Error('Not enough data for DGS10')
   const latest = parseFloat(obs[0].value)
-  const oldest = parseFloat(obs[obs.length - 1].value)
-  return { value: latest, change: latest - oldest }
+  const previous = parseFloat(obs[1].value)
+  return { value: latest, change: latest - previous }
 }
 
 export async function getMortgageRate(): Promise<number> {

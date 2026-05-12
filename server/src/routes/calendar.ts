@@ -33,7 +33,7 @@ const ECONOMIC_EVENTS = [
   { date: '2026-04-03', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
   { date: '2026-05-08', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
   { date: '2026-06-05', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
-  { date: '2026-07-02', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
+  { date: '2026-07-03', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
   { date: '2026-08-07', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
   { date: '2026-09-04', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
   { date: '2026-10-02', name: 'Non-Farm Payrolls', impact: 'high' as const, previous: '', forecast: '' },
