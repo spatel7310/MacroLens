@@ -85,7 +85,7 @@ export function AlertsPanel() {
               <span>⚠ {alert.message}</span>
               <button
                 onClick={() => dismissAlert(alert.id)}
-                className="text-chrome/40 hover:text-chrome ml-2"
+                className="text-chrome/75 hover:text-chrome ml-2"
               >
                 ✕
               </button>
@@ -95,19 +95,19 @@ export function AlertsPanel() {
       )}
 
       <div className="space-y-2">
-        <div className="text-[10px] text-chrome/40 uppercase tracking-wider">Rules</div>
+        <div className="text-[10px] text-chrome/75 uppercase tracking-wider">Rules</div>
         {rules.map((rule) => (
           <div key={rule.id} className="flex items-center justify-between text-xs py-1">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => toggleRule(rule.id)}
                 className={`h-4 w-4 rounded border text-[10px] flex items-center justify-center ${
-                  rule.enabled ? 'border-cyan bg-cyan/20 text-cyan' : 'border-chrome/30 text-chrome/30'
+                  rule.enabled ? 'border-cyan bg-cyan/20 text-cyan' : 'border-chrome/30 text-chrome/65'
                 }`}
               >
                 {rule.enabled ? '✓' : ''}
               </button>
-              <span className={rule.enabled ? 'text-chrome' : 'text-chrome/40'}>
+              <span className={rule.enabled ? 'text-chrome' : 'text-chrome/75'}>
                 {rule.label}
               </span>
             </div>
@@ -117,7 +117,7 @@ export function AlertsPanel() {
               </GlowBadge>
               <button
                 onClick={() => removeRule(rule.id)}
-                className="text-chrome/30 hover:text-magenta text-xs"
+                className="text-chrome/65 hover:text-magenta text-xs"
               >
                 ✕
               </button>

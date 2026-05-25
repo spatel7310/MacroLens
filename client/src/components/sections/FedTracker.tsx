@@ -35,7 +35,7 @@ export function FedTracker() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-chrome/50 uppercase tracking-wider">Next FOMC</div>
+              <div className="text-[10px] text-chrome/85 uppercase tracking-wider">Next FOMC</div>
               <div className="text-sm font-bold text-yellow glow-yellow">{data.nextMeeting}</div>
             </div>
             <div className="text-right">
@@ -48,7 +48,7 @@ export function FedTracker() {
               className="w-fit active:bg-yellow/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
               onClick={(e) => { e.stopPropagation(); setShowChart(true) }}
             >
-              <div className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <div className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 Current Rate
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -69,7 +69,7 @@ export function FedTracker() {
           </div>
         </div>
         <CollapsibleDescription visible={descVisible}>
-          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          <p className="text-[10px] text-chrome/70 leading-relaxed mt-2">
             The federal funds rate is the interest rate banks charge each other overnight. The Fed raises it to cool inflation and cuts it to stimulate growth — it ripples through mortgages, car loans, and savings rates.
           </p>
         </CollapsibleDescription>

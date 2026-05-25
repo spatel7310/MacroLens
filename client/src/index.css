@@ -23,7 +23,7 @@
   --toxic-green: #05ffa1;
   --hot-magenta: #ff2a6d;
   --electric-yellow: #fcee0a;
-  --chrome-gray: #a0a0b0;
+  --chrome-gray: #f0f0f8;
 }
 
 @theme {
@@ -32,7 +32,7 @@
   --color-green: #05ffa1;
   --color-magenta: #ff2a6d;
   --color-yellow: #fcee0a;
-  --color-chrome: #a0a0b0;
+  --color-chrome: #f0f0f8;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 

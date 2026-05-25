@@ -51,7 +51,7 @@ export function LaborMarket() {
     <>
       <SectionCard title="Labor Market" accent="cyan" onClick={toggleDesc}>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] text-chrome/50 uppercase tracking-wider">Labor Signal</span>
+          <span className="text-[10px] text-chrome/85 uppercase tracking-wider">Labor Signal</span>
           <GlowBadge variant={signalVariant}>{data.signal}</GlowBadge>
         </div>
 
@@ -68,7 +68,7 @@ export function LaborMarket() {
                 })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 Unemployment Rate
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -77,7 +77,7 @@ export function LaborMarket() {
               <div className="text-sm font-bold flex items-center gap-2">
                 <NumberTicker value={data.unemployment.current} format={formatRate} className="text-chrome" />
                 <TrendArrow direction={unemploymentDirection} />
-                <span className="text-[10px] text-chrome/40">{data.unemployment.trend}</span>
+                <span className="text-[10px] text-chrome/75">{data.unemployment.trend}</span>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export function LaborMarket() {
                 })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 Jobless Claims
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -104,20 +104,20 @@ export function LaborMarket() {
               <div className="text-sm font-bold flex items-center gap-2">
                 <NumberTicker value={data.claims.latest} format={formatClaims} className="text-chrome" />
                 <TrendArrow direction={claimsDirection} />
-                <span className="text-[10px] text-chrome/40">{data.claims.trend}</span>
+                <span className="text-[10px] text-chrome/75">{data.claims.trend}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-chrome/10 flex items-center gap-2 text-[10px] text-chrome/40">
+        <div className="mt-3 pt-3 border-t border-chrome/10 flex items-center gap-2 text-[10px] text-chrome/75">
           <span>4wk Avg Claims:</span>
-          <span className="text-chrome/60 font-bold">{formatClaims(data.claims.fourWeekAvg)}</span>
+          <span className="text-chrome/90 font-bold">{formatClaims(data.claims.fourWeekAvg)}</span>
           <span className="ml-auto">vs 3mo Unemployment:</span>
-          <span className="text-chrome/60 font-bold">{formatRate(data.unemployment.previous)}</span>
+          <span className="text-chrome/90 font-bold">{formatRate(data.unemployment.previous)}</span>
         </div>
         <CollapsibleDescription visible={descVisible}>
-          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          <p className="text-[10px] text-chrome/70 leading-relaxed mt-2">
             Rising unemployment and increasing jobless claims signal a weakening economy. The Fed often watches these closely — a sharp rise in claims can foreshadow recession and trigger rate cuts.
           </p>
         </CollapsibleDescription>

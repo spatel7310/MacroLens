@@ -23,7 +23,7 @@ function PullIndicator({ distance, ready }: { distance: number; ready: boolean }
         style={{
           opacity,
           transform: ready ? undefined : `rotate(${rotation}deg) scale(${scale})`,
-          color: ready ? '#00f0ff' : '#a0a0b0',
+          color: ready ? '#00f0ff' : '#f0f0f8',
           transition: ready ? undefined : 'color 0.15s',
         }}
       >

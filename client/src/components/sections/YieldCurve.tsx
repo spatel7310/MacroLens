@@ -19,7 +19,7 @@ interface ChartTarget {
 
 function InfoTip({ text }: { text: string }) {
   return (
-    <p className="text-[10px] text-chrome/35 leading-relaxed mt-1">{text}</p>
+    <p className="text-[10px] text-chrome/70 leading-relaxed mt-1">{text}</p>
   )
 }
 
@@ -76,7 +76,7 @@ export function YieldCurve() {
                 setChart({ seriesId: 'DGS10', label: '10Y Treasury Yield', color: '#00f0ff' })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 10Y Yield
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -94,7 +94,7 @@ export function YieldCurve() {
                 setChart({ seriesId: 'DGS2', label: '2Y Treasury Yield', color: '#05ffa1' })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 2Y Yield
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -117,7 +117,7 @@ export function YieldCurve() {
                 })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 Spread
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -149,7 +149,7 @@ export function YieldCurve() {
                 })
               }}
             >
-              <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+              <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
                 Consumer Sentiment
                 <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                   <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -158,7 +158,7 @@ export function YieldCurve() {
               <div className="text-sm font-bold flex items-center gap-2 mt-1">
                 <NumberTicker value={data.sentiment.current} format={(n) => n.toFixed(1)} className={sentimentColor} />
                 <TrendArrow direction={sentimentDirection} />
-                <span className="text-[10px] text-chrome/40">
+                <span className="text-[10px] text-chrome/75">
                   prev {data.sentiment.previous.toFixed(1)}
                 </span>
               </div>

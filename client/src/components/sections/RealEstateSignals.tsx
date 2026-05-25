@@ -36,7 +36,7 @@ export function RealEstateSignals() {
             className="w-fit active:bg-magenta/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
             onClick={(e) => { e.stopPropagation(); setShowChart(true) }}
           >
-            <div className="text-[10px] text-chrome/50 uppercase tracking-wider">
+            <div className="text-[10px] text-chrome/85 uppercase tracking-wider">
               30Y Mortgage
               <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
                 <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -50,7 +50,7 @@ export function RealEstateSignals() {
 
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-chrome/50 uppercase tracking-wider">Home Price Index</div>
+              <div className="text-[10px] text-chrome/85 uppercase tracking-wider">Home Price Index</div>
               <div className="flex items-center gap-2">
                 <NumberTicker value={data.homePriceIndex} format={(n) => n.toFixed(1)} className="text-sm font-bold text-chrome" />
                 <span className={`text-xs ${data.homePriceYoY >= 0 ? 'text-green' : 'text-magenta'}`}>
@@ -62,7 +62,7 @@ export function RealEstateSignals() {
 
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-chrome/50 uppercase tracking-wider">Rent CPI</div>
+              <div className="text-[10px] text-chrome/85 uppercase tracking-wider">Rent CPI</div>
               <span className={`text-sm font-bold ${data.rentTrendYoY >= 0 ? 'text-magenta' : 'text-green'}`}>
                 {formatPercent(data.rentTrendYoY)} YoY
               </span>
@@ -70,7 +70,7 @@ export function RealEstateSignals() {
           </div>
         </div>
         <CollapsibleDescription visible={descVisible}>
-          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          <p className="text-[10px] text-chrome/70 leading-relaxed mt-2">
             Mortgage rates follow the 10Y Treasury. Rising rates reduce buying power and cool home prices, while falling rates fuel demand. Rent CPI shows how shelter costs are driving inflation.
           </p>
         </CollapsibleDescription>

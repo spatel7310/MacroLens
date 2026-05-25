@@ -59,7 +59,7 @@ export function EconomicCalendar() {
   if (!data?.length) {
     return (
       <SectionCard title="Economic Calendar" accent="cyan">
-        <p className="text-xs text-chrome/40">No upcoming events</p>
+        <p className="text-xs text-chrome/75">No upcoming events</p>
       </SectionCard>
     )
   }
@@ -77,9 +77,9 @@ export function EconomicCalendar() {
           return (
             <div key={i}>
               <div
-                className={`flex items-center gap-3 text-xs py-1 ${isNear ? 'text-cyan' : 'text-chrome/70'}`}
+                className={`flex items-center gap-3 text-xs py-1 ${isNear ? 'text-cyan' : 'text-chrome/95'}`}
               >
-                <span className="w-16 shrink-0 text-chrome/40">
+                <span className="w-16 shrink-0 text-chrome/75">
                   {eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
                 <ImpactDot impact={event.impact} />
@@ -87,7 +87,7 @@ export function EconomicCalendar() {
               </div>
               {desc && (
                 <CollapsibleDescription visible={descVisible}>
-                  <p className="text-[10px] text-chrome/35 leading-relaxed ml-[calc(4rem+0.75rem+0.5rem+0.5rem)] mt-0.5">
+                  <p className="text-[10px] text-chrome/70 leading-relaxed ml-[calc(4rem+0.75rem+0.5rem+0.5rem)] mt-0.5">
                     {desc}
                   </p>
                 </CollapsibleDescription>

@@ -3,6 +3,8 @@ import cors from 'cors'
 import { createServer } from 'http'
 import { config } from './config.js'
 import { setupWebSocket } from './websocket/finnhubProxy.js'
+import { apiLimiter, lookupLimiter } from './middleware/rateLimit.js'
+import { payloadErrorHandler } from './middleware/errorHandlers.js'
 import macroRouter from './routes/macro.js'
 import fedRouter from './routes/fed.js'
 import marketRouter from './routes/market.js'
@@ -15,8 +17,19 @@ import laborRouter from './routes/labor.js'
 import yieldCurveRouter from './routes/yieldCurve.js'
 
 const app = express()
-app.use(cors())
-app.use(express.json())
+
+app.set('trust proxy', 1)
+
+app.use(
+  cors({
+    origin: config.nodeEnv === 'production' ? config.allowedOrigins : true,
+    methods: ['GET', 'POST'],
+  }),
+)
+app.use(express.json({ limit: '16kb' }))
+app.use(express.urlencoded({ limit: '16kb', extended: false }))
+app.use(payloadErrorHandler)
+app.use('/api', apiLimiter)
 
 // Health check
 app.get('/api/health', (_req, res) => {
@@ -31,7 +44,7 @@ app.use('/api/real-estate', realEstateRouter)
 app.use('/api/calendar', calendarRouter)
 app.use('/api/news', newsRouter)
 app.use('/api/history', historyRouter)
-app.use('/api/deal', dealRouter)
+app.use('/api/deal', lookupLimiter, dealRouter)
 app.use('/api/labor', laborRouter)
 app.use('/api/yield-curve', yieldCurveRouter)
 

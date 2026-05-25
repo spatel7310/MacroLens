@@ -7,6 +7,11 @@ dotenv.config({ path: resolve(__dirname, '../../.env') })
 
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
+  nodeEnv: process.env.NODE_ENV || 'development',
+  allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
   finnhubApiKey: process.env.FINNHUB_API_KEY || '',
   fredApiKey: process.env.FRED_API_KEY || '',
   alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY || '',

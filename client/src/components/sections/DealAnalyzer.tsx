@@ -19,7 +19,7 @@ const fmtNum = new Intl.NumberFormat('en-US')
 
 // --- Styles ---
 const inputClass = 'w-full h-10 bg-void border border-green/20 rounded px-3 text-sm text-chrome focus:border-green/50 outline-none'
-const labelClass = 'text-[10px] text-chrome/50 uppercase tracking-wider mb-1 block'
+const labelClass = 'text-[10px] text-chrome/85 uppercase tracking-wider mb-1 block'
 const btnClass = 'bg-green/10 border border-green/30 rounded px-4 py-2.5 text-xs font-bold text-green uppercase tracking-wider active:bg-green/20 transition-colors'
 
 // --- Sub-components ---
@@ -29,7 +29,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
     <div>
       <label className={labelClass}>
         {label}
-        {hint && <span className="text-chrome/30 normal-case tracking-normal ml-1">{hint}</span>}
+        {hint && <span className="text-chrome/65 normal-case tracking-normal ml-1">{hint}</span>}
       </label>
       {children}
     </div>
@@ -41,7 +41,7 @@ function Stat({ label, value, color = 'text-chrome', sub }: {
 }) {
   return (
     <div>
-      <div className="text-[10px] text-chrome/40 uppercase tracking-wider">{label}</div>
+      <div className="text-[10px] text-chrome/75 uppercase tracking-wider">{label}</div>
       <div className={`text-base font-bold ${color}`}>{value}</div>
       {sub}
     </div>
@@ -127,7 +127,7 @@ function ExpenseInput({ value, isCustom, onChange }: {
       onFocus={() => { focused.current = true }}
       onBlur={() => { focused.current = false; setLocal(value) }}
       onChange={(e) => { const r = e.target.value.replace(/[^0-9.]/g, ''); setLocal(r); onChange(r) }}
-      className={`${expInputClass} ${isCustom ? 'border-green/40 text-green' : 'border-chrome/10 text-chrome/60'}`}
+      className={`${expInputClass} ${isCustom ? 'border-green/40 text-green' : 'border-chrome/10 text-chrome/90'}`}
     />
   )
 }
@@ -145,13 +145,13 @@ function DualExpenseRow({ label, pctValue, pctDefault, dollarBase, pctKey, onUpd
   const isCustom = pctValue !== undefined
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">{label}</span>
+      <span className="text-[10px] text-chrome/85 flex-1 min-w-0 truncate">{label}</span>
       <ExpenseInput
         value={isCustom ? String(pct) : String(pctDefault)}
         isCustom={isCustom}
         onChange={(raw) => onUpdate(pctKey, raw === '' ? undefined : parseFloat(raw) || 0)}
       />
-      <span className="text-[10px] text-chrome/30 w-3">%</span>
+      <span className="text-[10px] text-chrome/65 w-3">%</span>
       <ExpenseInput
         value={fmtNum.format(dollar)}
         isCustom={isCustom}
@@ -163,7 +163,7 @@ function DualExpenseRow({ label, pctValue, pctDefault, dollarBase, pctKey, onUpd
           }
         }}
       />
-      <span className="text-[10px] text-chrome/30 w-5">$/yr</span>
+      <span className="text-[10px] text-chrome/65 w-5">$/yr</span>
     </div>
   )
 }
@@ -192,7 +192,7 @@ function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between text-[10px] uppercase tracking-wider font-bold py-1.5 transition-colors ${
-          hasOverrides ? 'text-green/70' : 'text-chrome/30 active:text-chrome/50'
+          hasOverrides ? 'text-green/70' : 'text-chrome/65 active:text-chrome/85'
         }`}
       >
         <span>
@@ -207,23 +207,23 @@ function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice
           {/* Header */}
           <div className="flex items-center gap-1.5 mb-1">
             <span className="flex-1" />
-            <span className="w-[4.5rem] text-[9px] text-chrome/30 text-right">%</span>
+            <span className="w-[4.5rem] text-[9px] text-chrome/65 text-right">%</span>
             <span className="w-3" />
-            <span className="w-[4.5rem] text-[9px] text-chrome/30 text-right">$/yr</span>
+            <span className="w-[4.5rem] text-[9px] text-chrome/65 text-right">$/yr</span>
             <span className="w-5" />
           </div>
 
           {/* Vacancy — % only */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">Vacancy</span>
+            <span className="text-[10px] text-chrome/85 flex-1 min-w-0 truncate">Vacancy</span>
             <ExpenseInput
               value={isVacCustom ? String(vacPct) : String(defaults.vacancyPct!)}
               isCustom={isVacCustom}
               onChange={(raw) => onUpdate('vacancyPct', raw === '' ? undefined : parseFloat(raw) || 0)}
             />
-            <span className="text-[10px] text-chrome/30 w-3">%</span>
-            <span className="w-[4.5rem] text-[10px] text-chrome/25 text-right">{fmtNum.format(Math.round(grossRent * vacPct / 100))}</span>
-            <span className="text-[10px] text-chrome/25 w-5">$/yr</span>
+            <span className="text-[10px] text-chrome/65 w-3">%</span>
+            <span className="w-[4.5rem] text-[10px] text-chrome/60 text-right">{fmtNum.format(Math.round(grossRent * vacPct / 100))}</span>
+            <span className="text-[10px] text-chrome/60 w-5">$/yr</span>
           </div>
 
           {/* Tax — % of purchase price */}
@@ -231,7 +231,7 @@ function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice
 
           {/* Insurance — dollar amount */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-chrome/50 flex-1 min-w-0 truncate">Insurance{isMF ? ' /unit' : ''}</span>
+            <span className="text-[10px] text-chrome/85 flex-1 min-w-0 truncate">Insurance{isMF ? ' /unit' : ''}</span>
             <span className="w-[4.5rem]" />
             <span className="w-3" />
             <ExpenseInput
@@ -242,15 +242,15 @@ function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice
                 onUpdate('insurancePerUnit', num === defaults.insurancePerUnit! ? undefined : num)
               }}
             />
-            <span className="text-[10px] text-chrome/30 w-5">{isMF ? '$/u' : '$/yr'}</span>
+            <span className="text-[10px] text-chrome/65 w-5">{isMF ? '$/u' : '$/yr'}</span>
           </div>
           {isMF && units > 1 && (
             <div className="flex items-center gap-1.5 -mt-0.5">
               <span className="flex-1" />
               <span className="w-[4.5rem]" />
               <span className="w-3" />
-              <span className="w-[4.5rem] text-[10px] text-chrome/25 text-right">{fmtNum.format(totalIns)}</span>
-              <span className="text-[10px] text-chrome/25 w-5">total</span>
+              <span className="w-[4.5rem] text-[10px] text-chrome/60 text-right">{fmtNum.format(totalIns)}</span>
+              <span className="text-[10px] text-chrome/60 w-5">total</span>
             </div>
           )}
 
@@ -271,7 +271,7 @@ function ExpenseCustomizer({ overrides, defaults, isMF, grossRent, purchasePrice
           {hasOverrides && (
             <button
               onClick={onClear}
-              className="text-[10px] text-chrome/30 uppercase tracking-wider active:text-magenta mt-1"
+              className="text-[10px] text-chrome/65 uppercase tracking-wider active:text-magenta mt-1"
             >
               Reset to Defaults
             </button>
@@ -296,7 +296,7 @@ function TabSwitcher({ active, onChange }: { active: DealTab; onChange: (t: Deal
           className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
             active === t.key
               ? 'bg-green/15 text-green border-green/30'
-              : 'bg-void text-chrome/30 active:text-chrome/50'
+              : 'bg-void text-chrome/65 active:text-chrome/85'
           }`}
         >
           {t.label}
@@ -432,21 +432,21 @@ export function DealAnalyzer() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             {areaData.census?.medianIncome && (
               <div>
-                <div className="text-chrome/40 text-[9px] uppercase">Med. Income</div>
+                <div className="text-chrome/75 text-[9px] uppercase">Med. Income</div>
                 <div className="text-chrome font-bold">{fmt.format(areaData.census.medianIncome)}</div>
               </div>
             )}
             {areaData.census?.population && (
               <div>
-                <div className="text-chrome/40 text-[9px] uppercase">Population</div>
+                <div className="text-chrome/75 text-[9px] uppercase">Population</div>
                 <div className="text-chrome font-bold">{fmtNum.format(areaData.census.population)}</div>
               </div>
             )}
           </div>
           {areaData.fmr && (
             <div className="mt-2 pt-2 border-t border-green/10">
-              <div className="text-chrome/40 text-[9px] uppercase mb-1">HUD Fair Market Rents</div>
-              <div className="flex gap-3 text-[10px] text-chrome/70 overflow-x-auto">
+              <div className="text-chrome/75 text-[9px] uppercase mb-1">HUD Fair Market Rents</div>
+              <div className="flex gap-3 text-[10px] text-chrome/95 overflow-x-auto">
                 <span>Studio <b className="text-chrome">${areaData.fmr.studio}</b></span>
                 <span>1BR <b className="text-chrome">${areaData.fmr.oneBr}</b></span>
                 <span>2BR <b className="text-chrome">${areaData.fmr.twoBr}</b></span>
@@ -577,7 +577,7 @@ export function DealAnalyzer() {
             Save Deal
           </button>
         )}
-        <button onClick={store.reset} className="text-[10px] text-chrome/30 uppercase tracking-wider active:text-magenta">
+        <button onClick={store.reset} className="text-[10px] text-chrome/65 uppercase tracking-wider active:text-magenta">
           Clear
         </button>
         {savedDeals.length > 0 && (
@@ -597,7 +597,7 @@ export function DealAnalyzer() {
           className={`mt-3 w-full flex items-center justify-between rounded border px-3 py-2 text-xs transition-colors ${
             stressTest
               ? 'border-magenta/40 bg-magenta/10 text-magenta'
-              : 'border-chrome/10 bg-void text-chrome/40 active:border-chrome/20'
+              : 'border-chrome/10 bg-void text-chrome/75 active:border-chrome/20'
           }`}
         >
           <span className="uppercase tracking-wider text-[10px] font-bold">
@@ -661,10 +661,10 @@ export function DealAnalyzer() {
 
           {/* ── Max Offer ── */}
           <Divider />
-          <div className="text-[10px] text-chrome/50 uppercase tracking-wider mb-3">Max Offer Price</div>
+          <div className="text-[10px] text-chrome/85 uppercase tracking-wider mb-3">Max Offer Price</div>
           <div className="space-y-2.5">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-chrome/40 w-16 shrink-0">Cap Rate</span>
+              <span className="text-[10px] text-chrome/75 w-16 shrink-0">Cap Rate</span>
               <input
                 type="number" min={1} max={20} step={0.5}
                 value={targetCapRate || ''}
@@ -672,14 +672,14 @@ export function DealAnalyzer() {
                 className="w-14 h-8 bg-void border border-green/20 rounded px-2 text-xs text-chrome text-center focus:border-green/50 outline-none"
                 inputMode="decimal"
               />
-              <span className="text-[10px] text-chrome/30">%</span>
-              <span className="text-chrome/15 mx-0.5">=</span>
+              <span className="text-[10px] text-chrome/65">%</span>
+              <span className="text-chrome/50 mx-0.5">=</span>
               <span className="text-sm font-bold text-green flex-1 text-right">
                 {maxCapPrice && maxCapPrice > 0 ? fmt.format(maxCapPrice) : '—'}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-chrome/40 w-16 shrink-0">CoC Return</span>
+              <span className="text-[10px] text-chrome/75 w-16 shrink-0">CoC Return</span>
               <input
                 type="number" min={1} max={30} step={0.5}
                 value={targetCoC || ''}
@@ -687,8 +687,8 @@ export function DealAnalyzer() {
                 className="w-14 h-8 bg-void border border-green/20 rounded px-2 text-xs text-chrome text-center focus:border-green/50 outline-none"
                 inputMode="decimal"
               />
-              <span className="text-[10px] text-chrome/30">%</span>
-              <span className="text-chrome/15 mx-0.5">=</span>
+              <span className="text-[10px] text-chrome/65">%</span>
+              <span className="text-chrome/50 mx-0.5">=</span>
               <span className="text-sm font-bold text-green flex-1 text-right">
                 {maxCoCPrice && maxCoCPrice > 0 ? fmt.format(maxCoCPrice) : '—'}
               </span>
@@ -701,7 +701,7 @@ export function DealAnalyzer() {
       {showSaved && savedDeals.length > 0 && (
         <>
           <Divider />
-          <div className="text-[10px] text-chrome/50 uppercase tracking-wider mb-2">Saved Deals</div>
+          <div className="text-[10px] text-chrome/85 uppercase tracking-wider mb-2">Saved Deals</div>
           <div className="space-y-2">
             {savedDeals.map((deal) => (
               <div
@@ -714,10 +714,10 @@ export function DealAnalyzer() {
                 >
                   <div className="text-xs text-chrome truncate">
                     {deal.address}
-                    {deal.type === 'sfr' && <span className="text-chrome/30 ml-1.5">SFR</span>}
-                    {(deal.type === 'multifamily' || !deal.type) && <span className="text-chrome/30 ml-1.5">MF</span>}
+                    {deal.type === 'sfr' && <span className="text-chrome/65 ml-1.5">SFR</span>}
+                    {(deal.type === 'multifamily' || !deal.type) && <span className="text-chrome/65 ml-1.5">MF</span>}
                   </div>
-                  <div className="flex gap-3 mt-0.5 text-[10px] text-chrome/50">
+                  <div className="flex gap-3 mt-0.5 text-[10px] text-chrome/85">
                     <span>Cap {(deal.results.capRate * 100).toFixed(1)}%</span>
                     <span>CoC {(deal.results.cashOnCash * 100).toFixed(1)}%</span>
                     <span>{fmt.format(deal.results.monthlyCashFlow)}/mo</span>
@@ -725,7 +725,7 @@ export function DealAnalyzer() {
                 </button>
                 <button
                   onClick={() => store.removeDeal(deal.id)}
-                  className="text-chrome/20 active:text-magenta text-xs shrink-0 p-1"
+                  className="text-chrome/55 active:text-magenta text-xs shrink-0 p-1"
                 >
                   ✕
                 </button>

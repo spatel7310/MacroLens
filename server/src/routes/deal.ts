@@ -121,15 +121,22 @@ async function fetchCensus(stateFips: string, zip: string) {
   }
 }
 
+const ADDRESS_PATTERN = /^[\w\s.,'#\-/&()]+$/
+
 router.get('/lookup', async (req, res) => {
   try {
-    const address = req.query.address as string
-    if (!address || address.length < 5) {
+    const raw = req.query.address
+    if (typeof raw !== 'string') {
       res.status(400).json({ error: 'Address required' })
       return
     }
+    const address = raw.trim().slice(0, 200)
+    if (address.length < 5 || !ADDRESS_PATTERN.test(address)) {
+      res.status(400).json({ error: 'Invalid address' })
+      return
+    }
 
-    const cacheKey = `deal-lookup:${address.toLowerCase().trim()}`
+    const cacheKey = `deal-lookup:${address.toLowerCase()}`
     const data = await withCache<AreaData>(cacheKey, 24 * 60 * 60, async () => {
       const geo = await geocodeAddress(address)
       if (!geo) throw new Error('Address not found')

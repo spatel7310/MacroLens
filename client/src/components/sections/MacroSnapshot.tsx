@@ -29,7 +29,7 @@ function MetricCell({
           className="w-fit active:bg-cyan/5 rounded-md -m-1.5 p-1.5 cursor-pointer"
           onClick={onTap}
         >
-          <span className="text-[10px] text-chrome/50 uppercase tracking-wider">
+          <span className="text-[10px] text-chrome/85 uppercase tracking-wider">
             {label}
             <svg className="inline-block ml-1 -mt-px" width="8" height="8" viewBox="0 0 8 8" fill="none">
               <path d="M1 3h4m0 0L3.5 1.5M5 3l-1.5 1.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
@@ -43,7 +43,7 @@ function MetricCell({
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[10px] text-chrome/50 uppercase tracking-wider">{label}</span>
+      <span className="text-[10px] text-chrome/85 uppercase tracking-wider">{label}</span>
       <div className="text-sm font-bold">{children}</div>
     </div>
   )
@@ -134,7 +134,7 @@ export function MacroSnapshot() {
           </MetricCell>
         </div>
         <CollapsibleDescription visible={descVisible}>
-          <p className="text-[10px] text-chrome/35 leading-relaxed mt-2">
+          <p className="text-[10px] text-chrome/70 leading-relaxed mt-2">
             CPI (Consumer Price Index) tracks the average change in prices paid by consumers. The Fed targets 2% annual inflation — above 3% is considered "hot" and may prompt rate hikes.
           </p>
         </CollapsibleDescription>

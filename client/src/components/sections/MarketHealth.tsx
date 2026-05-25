@@ -27,7 +27,7 @@ export function MarketHealth() {
     <SectionCard title="Market Health" accent="cyan" onClick={toggleDesc}>
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-[10px] text-chrome/50 uppercase tracking-wider">VIX</div>
+          <div className="text-[10px] text-chrome/85 uppercase tracking-wider">VIX</div>
           <NumberTicker
             value={data.vix}
             format={(n) => n.toFixed(2)}
@@ -38,10 +38,10 @@ export function MarketHealth() {
       </div>
       <CollapsibleDescription visible={descVisible}>
         <div className="mt-2 space-y-1">
-          <p className="text-[10px] text-chrome/35 leading-relaxed">
+          <p className="text-[10px] text-chrome/70 leading-relaxed">
             The VIX measures expected market volatility over the next 30 days, often called the "fear gauge."
           </p>
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-chrome/30">
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-chrome/65">
             <span><span className="text-green/50">0–15</span> Low volatility, complacency</span>
             <span><span className="text-yellow/50">15–25</span> Normal range</span>
             <span><span className="text-magenta/50">25–35</span> Elevated fear</span>

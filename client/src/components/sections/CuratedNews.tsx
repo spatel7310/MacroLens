@@ -33,12 +33,12 @@ function NewsItem({ item }: { item: { url: string; relativeTime: string; title: 
       rel="noopener noreferrer"
       className="flex items-start gap-2 text-xs py-1 group"
     >
-      <span className="text-chrome/30 shrink-0 w-12">{item.relativeTime}</span>
+      <span className="text-chrome/65 shrink-0 w-12">{item.relativeTime}</span>
       <div className="flex-1 min-w-0">
         <p className="text-chrome group-hover:text-cyan transition-colors">
           {item.title}
         </p>
-        <p className="text-chrome/30 text-[10px]">{item.source}</p>
+        <p className="text-chrome/65 text-[10px]">{item.source}</p>
       </div>
     </a>
   )
@@ -63,7 +63,7 @@ export function CuratedNews() {
   if (!data?.length) {
     return (
       <SectionCard title="Curated News" accent="cyan">
-        <p className="text-xs text-chrome/40">No news available</p>
+        <p className="text-xs text-chrome/75">No news available</p>
       </SectionCard>
     )
   }
@@ -79,7 +79,7 @@ export function CuratedNews() {
         extraItems.length > 0 ? (
           <button
             onClick={toggleExpanded}
-            className="text-chrome/40 hover:text-cyan transition-colors p-1 -m-1"
+            className="text-chrome/75 hover:text-cyan transition-colors p-1 -m-1"
             aria-label={expanded ? 'Show less news' : 'Show more news'}
           >
             {expanded ? (

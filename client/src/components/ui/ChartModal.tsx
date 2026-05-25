@@ -33,7 +33,7 @@ function CustomTooltip({ active, payload, label, formatValue }: any) {
   const fmt = formatValue || defaultFormatValue
   return (
     <div className="bg-void/95 border border-cyan/30 rounded px-3 py-2 text-xs">
-      <p className="text-chrome/50">{label}</p>
+      <p className="text-chrome/85">{label}</p>
       <p className="text-cyan font-bold">{fmt(payload[0].value)}</p>
     </div>
   )
@@ -78,14 +78,14 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
                 {label}
               </h2>
               {chartData.length > 0 && (
-                <p className="text-[10px] text-chrome/40 mt-0.5">
+                <p className="text-[10px] text-chrome/75 mt-0.5">
                   {chartData[0].date} — {chartData[chartData.length - 1].date}
                 </p>
               )}
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded border border-chrome/20 text-chrome/60 active:bg-chrome/10"
+              className="w-8 h-8 flex items-center justify-center rounded border border-chrome/20 text-chrome/90 active:bg-chrome/10"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -102,7 +102,7 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
                 className={`flex-1 py-1.5 rounded text-[11px] font-bold uppercase tracking-wider transition-colors ${
                   r === range
                     ? 'bg-cyan/15 text-cyan border border-cyan/40'
-                    : 'text-chrome/40 border border-chrome/10 active:bg-chrome/5'
+                    : 'text-chrome/75 border border-chrome/10 active:bg-chrome/5'
                 }`}
               >
                 {r}
@@ -114,11 +114,11 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
           <div className="flex-1 px-2 pb-4 min-h-0">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <span className="text-xs text-chrome/30 uppercase tracking-wider">Loading…</span>
+                <span className="text-xs text-chrome/65 uppercase tracking-wider">Loading…</span>
               </div>
             ) : chartData.length === 0 ? (
               <div className="h-full flex items-center justify-center">
-                <span className="text-xs text-chrome/30 uppercase tracking-wider">No data</span>
+                <span className="text-xs text-chrome/65 uppercase tracking-wider">No data</span>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -132,15 +132,15 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
                   <XAxis
                     dataKey="date"
                     tickFormatter={(d: string) => formatDateLabel(d, range)}
-                    tick={{ fill: '#a0a0b0', fontSize: 10 }}
-                    axisLine={{ stroke: '#a0a0b020' }}
+                    tick={{ fill: '#f0f0f8', fontSize: 10 }}
+                    axisLine={{ stroke: '#f0f0f820' }}
                     tickLine={false}
                     interval="preserveStartEnd"
                     minTickGap={50}
                   />
                   <YAxis
                     domain={[min - padding, max + padding]}
-                    tick={{ fill: '#a0a0b0', fontSize: 10 }}
+                    tick={{ fill: '#f0f0f8', fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
                     width={40}
@@ -168,11 +168,11 @@ export function ChartModal({ seriesId, label, color = '#00f0ff', defaultRange = 
             return (
               <div className="px-4 pb-6 flex justify-between text-xs">
                 <div>
-                  <span className="text-chrome/40">Current </span>
+                  <span className="text-chrome/75">Current </span>
                   <span className="text-cyan font-bold">{fmt(current)}</span>
                 </div>
                 <div>
-                  <span className="text-chrome/40">Change </span>
+                  <span className="text-chrome/75">Change </span>
                   <span
                     className={`font-bold ${change >= 0 ? 'text-magenta' : 'text-green'}`}
                   >

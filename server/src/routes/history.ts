@@ -29,14 +29,15 @@ const RANGE_LIMITS: Record<string, number> = {
 router.get('/:seriesId', async (req, res) => {
   try {
     const { seriesId } = req.params
-    const range = (req.query.range as string) || '3M'
+    const rawRange = req.query.range
+    const range = typeof rawRange === 'string' && rawRange in RANGE_LIMITS ? rawRange : '3M'
 
     if (!ALLOWED_SERIES[seriesId]) {
       res.status(400).json({ error: 'Invalid series' })
       return
     }
 
-    const days = RANGE_LIMITS[range] || 90
+    const days = RANGE_LIMITS[range]
     const cacheKey = `history:${seriesId}:${range}`
 
     const data = await withCache(cacheKey, config.cacheTTL.fred, async () => {
