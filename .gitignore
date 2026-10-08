@@ -3,5 +3,12 @@ dist/
 .env
 .env.local
 .env.*.local
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+hidden_docs/
+.claude/
 *.log
 .DS_Store

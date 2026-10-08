@@ -5,6 +5,7 @@ import { config } from './config.js'
 import { setupWebSocket } from './websocket/finnhubProxy.js'
 import { apiLimiter, lookupLimiter } from './middleware/rateLimit.js'
 import { payloadErrorHandler } from './middleware/errorHandlers.js'
+import { serveFrontend } from './frontend.js'
 import macroRouter from './routes/macro.js'
 import fedRouter from './routes/fed.js'
 import marketRouter from './routes/market.js'
@@ -48,9 +49,16 @@ app.use('/api/deal', lookupLimiter, dealRouter)
 app.use('/api/labor', laborRouter)
 app.use('/api/yield-curve', yieldCurveRouter)
 
+// Unknown API paths must not fall through to the React page.
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'API route not found' })
+})
+serveFrontend(app)
+
 const server = createServer(app)
 setupWebSocket(server)
 
 server.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`)
+  const address = server.address()
+  console.log(`Server running on port ${typeof address === 'object' && address ? address.port : config.port}`)
 })

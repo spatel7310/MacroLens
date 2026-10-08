@@ -114,6 +114,75 @@ npm run build
 npm start
 ```
 
+The production start command sets `NODE_ENV=production`. Open
+`http://localhost:3001` (or the configured `PORT`): one Express process serves
+the compiled React frontend, `/api/*`, and the `/ws` WebSocket endpoint.
+No Vite server or separate frontend server is needed in production. Leave
+`VITE_SERVER_URL` unset when building for this deployment so the browser uses
+the same origin for the frontend, API, and WebSocket. Set `ALLOWED_ORIGINS`
+to the public website origin for production.
+
+Express resolves `client/dist` relative to its own files, independent of the
+working directory. Keep `client/dist` and `server/dist` in their current
+relative layout when packaging the application. Production startup fails
+with a build instruction if `client/dist/index.html` is missing.
+
+API routes are matched before static files. Browser navigation to an
+extensionless frontend route returns `index.html`; unknown API routes and
+missing assets return 404. Fingerprinted assets are cached for a year, while
+HTML, the service worker, and other public files revalidate on each request.
+Local development still uses `npm run dev` with Vite's live reload.
+
+Run `npm run test:production` to rebuild and verify frontend delivery, assets,
+frontend navigation, API health and 404 responses, service-worker cache
+headers, and the WebSocket handshake against one server on a temporary port.
+This smoke test disables upstream API credentials and does not test live
+market data providers.
+
+## Docker
+
+Build the image from the repository root. Docker Desktop must be running:
+
+```sh
+docker build --platform linux/arm64 -t macrolens:local .
+docker run --rm --name macrolens -p 127.0.0.1:3001:3001 \
+  -e ALLOWED_ORIGINS=http://localhost:3001 \
+  macrolens:local
+```
+
+Open http://localhost:3001. This image runs the compiled frontend, API, and
+WebSocket endpoint through one Node application process. The ARM64 image runs
+natively on Apple Silicon and a Pi running a 64-bit Linux OS. Intel Macs can
+build and test it using Docker's emulation, or omit `--platform` for a native
+local image.
+
+For live data, supply keys at container startup with `--env-file .env` before
+the image name. Override development values after the environment file:
+
+```sh
+docker run --rm --name macrolens -p 127.0.0.1:3001:3001 \
+  --env-file .env -e NODE_ENV=production -e PORT=3001 \
+  -e ALLOWED_ORIGINS=http://localhost:3001 \
+  macrolens:local
+```
+
+Use an existing environment file containing your keys; keep it out of Git.
+The Docker build excludes environment files, local dependencies, Git history,
+and local build output. It builds with the locked dependencies, then copies
+only compiled files and server production dependencies into the final image.
+The application runs as the unprivileged `node` user and receives shutdown
+signals directly. No host source-code mount or database volume is needed.
+
+The container checks `/api/health` every 30 seconds. This checks whether the
+server responds, not whether external data providers are available. Docker
+reports unhealthy status but does not automatically restart unhealthy
+containers. View status with `docker ps`, logs with `docker logs macrolens`,
+and stop it with `docker stop macrolens`.
+
+The local port binding above is accessible only from this Mac. The Pi's
+eventual reverse proxy will reach the container through a private Docker
+network. Production keys and domain settings will be provided at runtime.
+
 ## Future Plans
 
 ### Near-term (V2)
